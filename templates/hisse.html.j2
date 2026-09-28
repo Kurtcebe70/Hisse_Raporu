@@ -54,7 +54,7 @@
 <!-- ÖZET -->
 <section class="grid three" style="margin-top:18px">
   <div class="card gauge">
-    <div class="sec-no">HİSSE KARNESİ</div>
+    <div class="sec-no">{{ 'FON (ETF) — KARNE UYGULANMAZ' if s.etf else 'HİSSE KARNESİ' }}</div>
     <div class="n">{{ s.karne.skor if s.karne.skor is not none else '—' }}<small>/100</small></div>
     <div class="meter"><i style="left:{{ s.karne.skor or 0 }}%"></i></div>
     <div class="meter-l"><span>Zayıf</span><span>Orta</span><span>Güçlü</span></div>
@@ -145,8 +145,8 @@
   <h2>Trend ve çıkış planı</h2>
   <p class="sub">Son 120 seans · 20/50/200 günlük ortalamalar · seviyeler salınım tepe/diplerinden</p>
   <div class="card">
-    <div class="legend"><span><i style="background:var(--ink)"></i>Fiyat</span><span><i style="background:var(--c1)"></i>20G {{ t.ma[20]|num(2) }}</span>
-      <span><i style="background:var(--c3)"></i>50G {{ t.ma[50]|num(2) }}</span><span><i style="background:var(--c4)"></i>200G {{ t.ma[200]|num(2) if t.ma[200] else '—' }}</span></div>
+    <div class="legend"><span><i style="background:var(--ink)"></i>Fiyat</span><span><i style="background:var(--c1)"></i>20G {{ t.ma.get(20)|num(2) }}</span>
+      <span><i style="background:var(--c3)"></i>50G {{ t.ma.get(50)|num(2) }}</span><span><i style="background:var(--c4)"></i>200G {{ t.ma.get(200)|num(2) }}</span></div>
     {{ line_chart(t.seriler, 900, 260)|safe }}
     <div class="meter-l"><span>{{ t.ilk_tarih }}</span><span>{{ t.son_tarih }}</span></div>
     {% for u in t.uyarilar %}<div class="note" style="background:var(--warn-bg)">⚠ {{ u }}</div>{% endfor %}
