@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TER · Hisse Raporu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f7f9;--panel:#ffffff;--panel2:#f1f3f6;--line:#e3e6eb;--ink:#141821;--muted:#5d6675;--faint:#8b93a1;
+  --pos:#0f8a5f;--neg:#c9372c;--warn:#b7791f;--acc:#3b5bdb;--pos-bg:#e6f5ee;--neg-bg:#fbeae8;--warn-bg:#fdf3e1;--acc-bg:#e8ecfb;
+  --c1:#3b82f6;--c2:#9b59d0;--c3:#d4892a;--c4:#d64545;--bar:#c9ced8;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c0f14;--panel:#141922;--panel2:#1a202b;--line:#252c38;--ink:#e8ebf0;--muted:#9aa3b2;--faint:#6b7483;
+  --pos:#34c38f;--neg:#f0645a;--warn:#f0b44c;--acc:#7c93ff;--pos-bg:#12281f;--neg-bg:#2c1716;--warn-bg:#2b2112;--acc-bg:#1a2140;--c1:#5b9bff;--c2:#b58cf0;--c3:#f0a94c;--c4:#f0645a;--bar:#3a4252;}}
+:root[data-theme="dark"]{
+  --bg:#0c0f14;--panel:#141922;--panel2:#1a202b;--line:#252c38;--ink:#e8ebf0;--muted:#9aa3b2;--faint:#6b7483;
+  --pos:#34c38f;--neg:#f0645a;--warn:#f0b44c;--acc:#7c93ff;--pos-bg:#12281f;--neg-bg:#2c1716;--warn-bg:#2b2112;--acc-bg:#1a2140;--c1:#5b9bff;--c2:#b58cf0;--c3:#f0a94c;--c4:#f0645a;--bar:#3a4252;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 16px 64px}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+h1{font-size:26px;letter-spacing:-.02em;margin:0}
+h2{font-size:19px;letter-spacing:-.01em;margin:0 0 4px}
+.sec{margin-top:40px}
+.sec-no{font:600 11px/1 "JetBrains Mono",monospace;color:var(--faint);letter-spacing:.12em;margin-bottom:6px}
+.sub{color:var(--muted);font-size:13px;margin:0 0 16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+.grid{display:grid;gap:12px}.grid>*{min-width:0}
+.pos{color:var(--pos)}.neg{color:var(--neg)}.neu{color:var(--muted)}
+.badge{display:inline-block;font:600 10px/1 "JetBrains Mono",monospace;letter-spacing:.08em;padding:4px 7px;border-radius:5px;text-transform:uppercase}
+.b-risk{background:var(--neg-bg);color:var(--neg)}.b-warn{background:var(--warn-bg);color:var(--warn)}
+.b-ok{background:var(--pos-bg);color:var(--pos)}.b-acc{background:var(--acc-bg);color:var(--acc)}
+.b-muted{background:var(--panel2);color:var(--muted)}
+/* header */
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-end;border-bottom:1px solid var(--line);padding-bottom:18px}
+.top .meta{color:var(--muted);font-size:13px;text-align:right}
+.theme-btn{background:var(--panel);border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:5px 10px;font:inherit;font-size:12px;cursor:pointer;margin-top:6px}
+/* hero */
+.hero{display:grid;grid-template-columns:260px 1fr;gap:12px;margin-top:22px}
+.gauge{display:flex;flex-direction:column;justify-content:center}
+.gauge .n{font:600 46px/1 "JetBrains Mono",monospace;letter-spacing:-.03em}
+.gauge .n small{font-size:18px;color:var(--faint)}
+.meter{height:8px;border-radius:99px;background:linear-gradient(90deg,var(--neg),var(--warn),var(--pos));position:relative;margin:14px 0 6px;opacity:.9}
+.meter i{position:absolute;top:-4px;width:4px;height:16px;border-radius:2px;background:var(--ink);transform:translateX(-2px)}
+.meter-l{display:flex;justify-content:space-between;font-size:11px;color:var(--faint)}
+.pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.pillar{background:var(--panel2);border-radius:10px;padding:10px 12px}
+.pillar .t{font-size:12px;color:var(--muted)}
+.pillar .v{font:600 18px/1.3 "JetBrains Mono",monospace}
+.bar{height:5px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:6px}
+.bar b{display:block;height:100%;border-radius:99px}
+.summary{font-size:15px;line-height:1.6}
+/* tiles */
+.tiles{grid-template-columns:repeat(auto-fill,minmax(172px,1fr))}
+.tile{padding:13px 14px 10px}
+.tile .k{font:600 10.5px/1.2 "JetBrains Mono",monospace;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;display:flex;justify-content:space-between;gap:6px}
+.tile .v{font:600 20px/1.35 "JetBrains Mono",monospace;margin-top:6px}
+.tile .c{font:500 12.5px/1 "JetBrains Mono",monospace}
+.spark{width:100%;height:28px;display:block;margin-top:8px}
+.tile .spark{color:var(--faint)}
+/* alerts */
+.two{grid-template-columns:1fr 1fr}
+.alert{border-left:3px solid var(--line);padding:12px 14px}
+.alert.risk{border-left-color:var(--neg)}.alert.hareket{border-left-color:var(--warn)}.alert.destek{border-left-color:var(--pos)}
+.alert h3{font-size:14px;margin:6px 0 4px}
+.alert p{margin:0;color:var(--muted);font-size:13.5px}
+ul.story{margin:0;padding-left:18px}ul.story li{margin:6px 0}
+.src{font-size:11.5px;color:var(--faint);margin-top:10px}
+/* scenarios */
+.sc{grid-template-columns:repeat(3,1fr)}
+.scn{border-top:3px solid var(--line)}
+.scn.up{border-top-color:var(--pos)}.scn.base{border-top-color:var(--warn)}.scn.down{border-top-color:var(--neg)}
+.scn.active{box-shadow:0 0 0 2px var(--acc) inset}
+.scn h3{font-size:15px;margin:8px 0}
+.scn p{font-size:13.5px;color:var(--muted);margin:10px 0 0}
+.cond{font-size:12.5px;display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.cond .mono{white-space:nowrap}
+/* tables */
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.tbl th{font:600 10.5px/1 "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);text-align:right;padding:8px 10px;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left}
+.tbl td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:right;vertical-align:middle}
+.tbl td.l{text-align:left}
+.tbl .spark{width:90px;height:22px;margin:0 0 0 auto;color:var(--faint)}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.range{position:relative;width:90px;height:6px;border-radius:99px;background:var(--panel2);margin-left:auto}
+.range i{position:absolute;top:-3px;width:3px;height:12px;border-radius:2px;background:var(--acc)}
+.flags{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+/* tabs */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tabs button{background:var(--panel);border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:7px 12px;font:500 13px Inter,sans-serif;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--acc-bg);color:var(--acc);border-color:var(--acc)}
+.tabpanel[hidden]{display:none}
+.note{background:var(--acc-bg);border-radius:10px;padding:12px 14px;font-size:13.5px;margin-top:12px}
+.foot{margin-top:48px;color:var(--faint);font-size:12px;border-top:1px solid var(--line);padding-top:16px;line-height:1.7}
+.foot a{color:var(--muted)}
+.gauges{display:grid;gap:12px}
+.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
+.chip{background:var(--panel2);border-radius:10px;padding:10px 12px;border-left:3px solid var(--line)}
+.chip b{font-family:"JetBrains Mono",monospace}.chip small{display:block;color:var(--muted);font-size:12px;line-height:1.4;margin-top:3px}
+.chip.g{border-left-color:var(--pos)}.chip.y{border-left-color:var(--warn)}.chip.r{border-left-color:var(--neg)}
+.charts{grid-template-columns:1fr 1fr}
+.chart{width:100%;height:auto;display:block}.chart .ax{font:10px "JetBrains Mono",monospace;fill:var(--faint)}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:11.5px;color:var(--muted);margin:6px 0 4px}
+.legend i{display:inline-block;width:10px;height:3px;border-radius:2px;margin-right:4px;vertical-align:middle}
+.okuma{font-size:13px;color:var(--muted);margin:8px 0 0}
+.rrgwrap{grid-template-columns:minmax(0,420px) 1fr;align-items:start}
+.rrg{width:100%;height:auto;border-radius:10px}.rrg .q{font:600 10px "JetBrains Mono",monospace;fill:var(--faint);letter-spacing:.08em}
+.rrg .lbl{font:600 10.5px "JetBrains Mono",monospace;fill:var(--ink)}
+.vols{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+.bars{width:100%;height:56px;display:block;margin-top:8px}
+.wl{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+.wl:last-child{border-bottom:0}.wl .badge{flex:none;margin-top:2px}
+.kv{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+.kv:last-child{border-bottom:0}
+@media (max-width:860px){.hero{grid-template-columns:1fr}.sc,.two,.charts,.rrgwrap{grid-template-columns:1fr}}
+@media (max-width:420px){.tiles{grid-template-columns:1fr 1fr}.tile .v{font-size:17px}h1{font-size:22px}}
+@media print{.tabs,.theme-btn{display:none}.tabpanel[hidden]{display:block}}
+</style>
+<style>
+.hdr{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-end;border-bottom:1px solid var(--line);padding-bottom:18px}
+.px{font:600 30px/1 "JetBrains Mono",monospace;margin-top:8px}
+.three{grid-template-columns:repeat(3,1fr)}
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)}
+.mgrid>div{padding:12px 14px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-width:0}
+.mgrid .k{font:600 10.5px "JetBrains Mono",monospace;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}
+.mgrid .v{font:600 18px/1.4 "JetBrains Mono",monospace;margin-top:4px}
+.mgrid small{display:block;color:var(--muted);font-size:11.5px;line-height:1.4;margin-top:4px}
+.dist{display:flex;height:22px;border-radius:6px;overflow:hidden;font:600 11px "JetBrains Mono",monospace}
+.dist span{display:flex;align-items:center;justify-content:center;color:#fff;min-width:0;overflow:hidden}
+.rngbar{position:relative;height:8px;border-radius:99px;background:var(--panel2);margin:28px 6px 26px}
+.rngbar .fill{position:absolute;top:0;bottom:0;border-radius:99px;background:var(--acc-bg);border:1px solid var(--acc)}
+.rngbar .mk{position:absolute;top:-6px;width:3px;height:20px;border-radius:2px;transform:translateX(-1px)}
+.rngbar .mk b{position:absolute;top:-19px;left:50%;transform:translateX(-50%);font:600 10.5px "JetBrains Mono",monospace;white-space:nowrap}
+.rngbar .mk i{position:absolute;top:22px;left:50%;transform:translateX(-50%);font:500 10px Inter;font-style:normal;color:var(--muted);white-space:nowrap}
+.chk{display:flex;gap:8px;font-size:13.5px;padding:5px 0}.chk .d{flex:none;width:18px;text-align:center}
+.lv{display:flex;justify-content:space-between;gap:8px;padding:7px 10px;border-radius:8px;font-size:13.5px;margin:3px 0}
+.lv.direnc{background:var(--neg-bg)}.lv.destek{background:var(--pos-bg)}.lv.now{background:var(--acc-bg);font-weight:700}
+@media (max-width:860px){.three{grid-template-columns:1fr}.mgrid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hdr">
+  <div>
+    <div style="font-size:13px"><a href="index.html" style="color:var(--acc);text-decoration:none">← Tüm hisseler</a> · <a href="https://kurtcebe70.github.io/Makro_Rapor/" style="color:var(--acc);text-decoration:none">Makro rapor</a></div>
+    <h1 style="margin-top:10px">TER <span style="font-weight:500;color:var(--muted);font-size:17px">Teradyne, Inc.</span></h1>
+    <div class="px">391,78 $ <span class="neg" style="font-size:18px">−%1,66</span></div>
+    <div class="sub" style="margin:6px 0 0">Technology · Semiconductor Equipment & Materials</div>
+  </div>
+  <div class="meta" style="color:var(--muted);font-size:13px;text-align:right">
+    <div>Veri: 28 Eyl kapanışı · üretim 14:37</div>
+    <div>Yorum: şablon</div>
+    <button class="theme-btn" id="themeBtn" type="button">Tema</button>
+  </div>
+</header>
+
+
+
+<!-- ÖZET -->
+<section class="grid three" style="margin-top:18px">
+  <div class="card gauge">
+    <div class="sec-no">HİSSE KARNESİ</div>
+    <div class="n">84<small>/100</small></div>
+    <div class="meter"><i style="left:84%"></i></div>
+    <div class="meter-l"><span>Zayıf</span><span>Orta</span><span>Güçlü</span></div>
+  </div>
+  <div class="card gauge">
+    <div class="sec-no">TREND SKORU</div>
+    <div class="n">75<small>/100</small></div>
+    <div style="font-weight:600;margin-top:4px">Güçlü yükseliş</div>
+    <div class="meter"><i style="left:75%"></i></div>
+  </div>
+  <div class="card gauge">
+    <div class="sec-no">ADİL DEĞER (3 YÖNTEM)</div>
+    
+    <div class="n" style="font-size:36px">382,10<small> $</small></div>
+    <div style="margin-top:6px"><span class="mono neg">−%2,5</span> <span class="neu">fiyata göre · güven 50/100</span></div>
+    
+  </div>
+</section>
+<div class="card" style="margin-top:12px"><p class="summary" style="margin:0">TER karne puanı 84/100, trend skoru 75/100 (Güçlü yükseliş). Adil değer harmanı 382,10 $ — fiyata göre −%2,5 (güven 50/100). Analistlerin %71'i 'Al' diyor.</p></div>
+
+<!-- METRİKLER -->
+<section class="sec">
+  <div class="sec-no">SAYILAR</div>
+  <h2>Tek bakışta</h2>
+  <p class="sub">Temel oranlar · kaynak Yahoo Finance</p>
+  <div class="mgrid">
+    <div><div class="k">Piyasa değeri</div><div class="v">61,3 Mr $</div></div>
+    <div><div class="k">Ciro büyümesi</div><div class="v pos">+%103,9</div><small>son çeyrek · yıllık</small></div>
+    <div><div class="k">EPS büyümesi</div><div class="v pos">+%377,9</div><small>son çeyrek · yıllık</small></div>
+    <div><div class="k">F/K</div><div class="v">53,7</div><small>son 12 ay</small></div>
+    <div><div class="k">İleri F/K</div><div class="v">33,6</div><small>gelecek yıl kâr tahminine göre</small></div>
+    <div><div class="k">PEG</div><div class="v">0,73</div><small>F/K ÷ beklenen büyüme (%28,2)</small></div>
+    <div><div class="k">Brüt / faaliyet marjı</div><div class="v">%59,2 / %33,2</div></div>
+    <div><div class="k">Serbest nakit marjı</div><div class="v">%17,9</div><small>12 aylık FCF ÷ ciro</small></div>
+    <div><div class="k">RSI</div><div class="v">56</div><small>14 günlük · 70+ aşırı alım, 30− aşırı satım</small></div>
+    <div><div class="k">52 hafta bandı</div><div class="v">%73</div><small>dip 131,40 · zirve 487,91</small></div>
+    <div><div class="k">Net nakit</div><div class="v pos">254,7 Mn $</div><small>nakit − toplam borç</small></div>
+    <div><div class="k">Sonraki bilanço</div><div class="v">21 Eki</div><small>17 işlem günü sonra</small></div>
+  </div>
+</section>
+
+<!-- 01 KARNE -->
+<section class="sec">
+  <div class="sec-no">01</div>
+  <h2>Karne</h2>
+  <p class="sub">Büyüme %20 · Kârlılık %20 · Bilanço %10 · Değerleme %20 · Trend %15 · Beklenti %15 · ağırlıklar config.yaml'da</p>
+  <div class="chips">
+    
+    <div class="chip g">Büyüme: <b>10,0/10</b>
+      <div class="bar"><b style="width:100.0%;background:var(--pos)"></b></div></div>
+    
+    <div class="chip g">Kârlılık: <b>8,4/10</b>
+      <div class="bar"><b style="width:84.0%;background:var(--pos)"></b></div></div>
+    
+    <div class="chip g">Bilanço: <b>10,0/10</b>
+      <div class="bar"><b style="width:100.0%;background:var(--pos)"></b></div></div>
+    
+    <div class="chip g">Değerleme: <b>7,8/10</b>
+      <div class="bar"><b style="width:78.0%;background:var(--pos)"></b></div></div>
+    
+    <div class="chip g">Trend: <b>7,5/10</b>
+      <div class="bar"><b style="width:75.0%;background:var(--pos)"></b></div></div>
+    
+    <div class="chip y">Beklenti: <b>6,9/10</b>
+      <div class="bar"><b style="width:69.0%;background:var(--warn)"></b></div></div>
+    
+  </div>
+  <div class="grid two" style="margin-top:12px">
+    <div class="card"><b class="pos">Güçlü yanlar</b><ul class="story"><li>Ciro bir yıl öncesine göre +%103,9 değişti.</li><li>Brüt marj %59,2, faaliyet marjı %33,2.</li><li>Net nakit 0,3 milyar $.</li><li>PEG 0,73 — F/K beklenen büyümeye göre makul.</li><li>Analistlerin %71'i 'Al' diyor; ortalama hedef +%14,0.</li><li>Trend skoru 75/100 (Güçlü yükseliş).</li></ul></div>
+    <div class="card"><b class="neg">Riskler / zayıf yanlar</b><ul class="story"><li>Son 90 günde yönetici alımı yok; 9 satış (5,9 milyon $).</li></ul></div>
+  </div>
+</section>
+
+<!-- 02 TEZ -->
+<section class="sec">
+  <div class="sec-no">02</div>
+  <h2>Yatırım tezin</h2>
+  <p class="sub">tezler.yaml · kurallar her gün otomatik kontrol edilir</p>
+  
+  <div class="card"><p class="neu" style="margin:0">Bu hisse için tezler.yaml'da kayıt yok. Tezini ve "tez bozulursa" kurallarını ekleyebilirsin.</p></div>
+  
+</section>
+
+<!-- 03 TREND -->
+<section class="sec">
+  <div class="sec-no">03</div>
+  <h2>Trend ve çıkış planı</h2>
+  <p class="sub">Son 120 seans · 20/50/200 günlük ortalamalar · seviyeler salınım tepe/diplerinden</p>
+  <div class="card">
+    <div class="legend"><span><i style="background:var(--ink)"></i>Fiyat</span><span><i style="background:var(--c1)"></i>20G 365,16</span>
+      <span><i style="background:var(--c3)"></i>50G 370,39</span><span><i style="background:var(--c4)"></i>200G 330,65</span></div>
+    <svg class="chart" viewBox="0 0 900 260" role="img" aria-label="Fiyat ve hareketli ortalamalar"><line x1="40" x2="900" y1="8.0" y2="8.0" stroke="var(--line)" stroke-dasharray="3 4"/><text x="0" y="12.0" class="ax">528</text><line x1="40" x2="900" y1="123.0" y2="123.0" stroke="var(--line)" stroke-dasharray="3 4"/><text x="0" y="127.0" class="ax">357</text><line x1="40" x2="900" y1="238.0" y2="238.0" stroke="var(--line)" stroke-dasharray="3 4"/><text x="0" y="242.0" class="ax">186</text><polyline points="40.0,238.0 47.2,237.1 54.4,236.1 61.6,235.2 68.8,234.3 76.0,233.4 83.2,232.4 90.4,231.5 97.5,230.5 104.7,229.6 111.9,228.6 119.1,227.5 126.3,226.4 133.5,225.4 140.7,224.5 147.9,223.8 155.1,222.9 162.3,222.1 169.5,221.2 176.7,220.4 183.9,219.4 191.1,218.5 198.3,217.6 205.4,216.7 212.6,215.8 219.8,214.9 227.0,214.0 234.2,213.2 241.4,212.5 248.6,211.8 255.8,211.0 263.0,210.1 270.2,209.3 277.4,208.3 284.6,207.4 291.8,206.5 299.0,205.6 306.2,204.8 313.3,203.8 320.5,202.8 327.7,201.8 334.9,201.0 342.1,200.1 349.3,199.2 356.5,198.5 363.7,197.6 370.9,196.6 378.1,195.5 385.3,194.6 392.5,193.6 399.7,192.5 406.9,191.4 414.1,190.4 421.2,189.4 428.4,188.2 435.6,187.1 442.8,185.9 450.0,184.7 457.2,183.6 464.4,182.8 471.6,181.9 478.8,181.1 486.0,180.3 493.2,179.5 500.4,178.8 507.6,178.1 514.8,177.3 521.9,176.6 529.1,176.0 536.3,175.4 543.5,174.7 550.7,173.9 557.9,173.2 565.1,172.4 572.3,171.7 579.5,171.1 586.7,170.5 593.9,169.9 601.1,169.1 608.3,168.4 615.5,167.6 622.7,166.7 629.8,165.9 637.0,165.0 644.2,164.2 651.4,163.5 658.6,162.7 665.8,161.8 673.0,160.9 680.2,160.0 687.4,159.0 694.6,158.2 701.8,157.6 709.0,156.9 716.2,156.2 723.4,155.6 730.6,155.0 737.7,154.4 744.9,153.8 752.1,153.2 759.3,152.6 766.5,152.1 773.7,151.5 780.9,150.9 788.1,150.3 795.3,149.6 802.5,148.9 809.7,148.2 816.9,147.4 824.1,146.9 831.3,146.3 838.5,145.8 845.6,145.2 852.8,144.6 860.0,143.9 867.2,143.2 874.4,142.6 881.6,142.0 888.8,141.3 896.0,140.7" fill="none" stroke="var(--c4)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="40.0,160.9 47.2,159.2 54.4,157.6 61.6,156.0 68.8,154.4 76.0,152.8 83.2,151.7 90.4,150.2 97.5,148.8 104.7,147.7 111.9,146.7 119.1,145.4 126.3,144.1 133.5,142.9 140.7,142.0 147.9,142.0 155.1,141.6 162.3,141.2 169.5,141.1 176.7,140.5 183.9,139.8 191.1,139.7 198.3,139.3 205.4,138.7 212.6,138.2 219.8,137.5 227.0,136.8 234.2,136.3 241.4,135.7 248.6,135.4 255.8,134.8 263.0,134.1 270.2,133.1 277.4,131.7 284.6,130.7 291.8,129.6 299.0,128.6 306.2,127.7 313.3,126.3 320.5,124.9 327.7,123.7 334.9,123.3 342.1,122.2 349.3,121.2 356.5,120.3 363.7,119.1 370.9,117.9 378.1,116.3 385.3,115.0 392.5,113.8 399.7,112.7 406.9,111.5 414.1,110.8 421.2,110.0 428.4,108.6 435.6,107.6 442.8,106.3 450.0,104.9 457.2,104.2 464.4,104.4 471.6,104.5 478.8,105.2 486.0,106.1 493.2,106.7 500.4,106.9 507.6,106.5 514.8,106.3 521.9,106.4 529.1,106.6 536.3,107.1 543.5,107.7 550.7,107.4 557.9,107.3 565.1,107.2 572.3,107.3 579.5,107.7 586.7,108.2 593.9,108.4 601.1,107.8 608.3,107.2 615.5,106.9 622.7,106.3 629.8,105.8 637.0,105.9 644.2,105.9 651.4,106.1 658.6,106.0 665.8,105.6 673.0,105.3 680.2,105.2 687.4,104.7 694.6,104.1 701.8,104.0 709.0,103.9 716.2,103.5 723.4,103.7 730.6,104.2 737.7,105.1 744.9,105.6 752.1,106.3 759.3,107.5 766.5,109.2 773.7,110.2 780.9,111.4 788.1,112.9 795.3,113.8 802.5,114.9 809.7,116.4 816.9,117.0 824.1,117.6 831.3,118.2 838.5,118.2 845.6,118.2 852.8,118.1 860.0,117.8 867.2,117.0 874.4,116.5 881.6,115.9 888.8,114.9 896.0,114.0" fill="none" stroke="var(--c3)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="40.0,158.0 47.2,156.0 54.4,153.2 61.6,150.4 68.8,148.2 76.0,146.0 83.2,143.7 90.4,141.1 97.5,138.3 104.7,135.7 111.9,133.6 119.1,131.0 126.3,126.9 133.5,123.3 140.7,119.8 147.9,119.5 155.1,118.5 162.3,117.3 169.5,116.5 176.7,115.3 183.9,114.5 191.1,114.8 198.3,115.1 205.4,115.2 212.6,115.4 219.8,115.5 227.0,115.8 234.2,117.2 241.4,119.1 248.6,121.0 255.8,122.4 263.0,124.0 270.2,126.0 277.4,126.4 284.6,126.6 291.8,124.0 299.0,123.0 306.2,122.2 313.3,120.3 320.5,118.5 327.7,117.7 334.9,117.6 342.1,117.1 349.3,117.0 356.5,117.4 363.7,116.8 370.9,115.2 378.1,112.0 385.3,109.1 392.5,106.1 399.7,103.0 406.9,99.5 414.1,97.5 421.2,96.2 428.4,92.9 435.6,91.1 442.8,88.1 450.0,84.3 457.2,83.1 464.4,84.5 471.6,85.4 478.8,85.9 486.0,86.7 493.2,86.9 500.4,86.5 507.6,87.9 514.8,89.5 521.9,92.6 529.1,95.5 536.3,98.4 543.5,101.9 550.7,104.7 557.9,106.4 565.1,108.2 572.3,112.3 579.5,115.7 586.7,120.5 593.9,126.0 601.1,128.1 608.3,128.1 615.5,128.6 622.7,126.5 629.8,125.3 637.0,124.5 644.2,123.9 651.4,123.1 658.6,122.2 665.8,120.1 673.0,117.2 680.2,114.0 687.4,110.3 694.6,109.3 701.8,108.9 709.0,108.6 716.2,107.7 723.4,106.7 730.6,105.2 737.7,103.7 744.9,103.5 752.1,103.9 759.3,104.5 766.5,106.8 773.7,108.4 780.9,109.9 788.1,110.7 795.3,110.4 802.5,110.3 809.7,111.4 816.9,112.4 824.1,115.4 831.3,119.1 838.5,121.2 845.6,122.1 852.8,122.5 860.0,122.3 867.2,121.2 874.4,120.4 881.6,119.6 888.8,118.7 896.0,117.5" fill="none" stroke="var(--c1)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="40.0,122.1 47.2,118.1 54.4,115.6 61.6,114.2 68.8,117.3 76.0,117.6 83.2,117.0 90.4,107.3 97.5,110.7 104.7,107.6 111.9,104.0 119.1,93.4 126.3,82.0 133.5,92.8 140.7,107.4 147.9,157.0 155.1,132.1 162.3,130.7 169.5,136.1 176.7,122.9 183.9,105.9 191.1,124.9 198.3,121.1 205.4,116.5 212.6,122.0 219.8,118.7 227.0,123.3 234.2,135.8 241.4,147.1 248.6,146.8 255.8,131.5 263.0,125.4 270.2,122.0 277.4,101.4 284.6,110.3 291.8,105.7 299.0,111.3 306.2,114.6 313.3,99.1 320.5,87.6 327.7,89.5 334.9,122.3 342.1,111.1 349.3,114.8 356.5,129.3 363.7,106.6 370.9,91.9 378.1,72.3 385.3,87.8 392.5,88.3 399.7,68.6 406.9,55.8 414.1,80.6 421.2,75.8 428.4,45.8 435.6,69.3 442.8,51.7 450.0,37.8 457.2,75.7 464.4,114.9 471.6,107.8 478.8,132.3 486.0,126.6 493.2,119.1 500.4,121.2 507.6,133.6 514.8,125.5 521.9,133.0 529.1,146.3 536.3,146.2 543.5,138.6 550.7,111.5 557.9,114.6 565.1,111.7 572.3,127.7 579.5,137.9 586.7,147.4 593.9,148.2 601.1,117.3 608.3,115.8 615.5,117.1 622.7,91.7 629.8,101.2 637.0,104.2 644.2,108.0 651.4,117.5 658.6,107.8 665.8,92.3 673.0,87.0 680.2,81.5 687.4,65.1 694.6,91.2 701.8,107.8 709.0,105.4 716.2,110.4 723.4,117.7 730.6,116.6 737.7,118.9 744.9,112.9 752.1,124.3 759.3,127.8 766.5,137.4 773.7,133.3 780.9,135.3 788.1,122.9 795.3,112.9 802.5,105.0 809.7,114.1 816.9,107.7 824.1,141.6 831.3,139.2 838.5,133.6 845.6,125.6 852.8,113.3 860.0,106.5 867.2,95.0 874.4,101.4 881.6,102.4 888.8,95.2 896.0,99.6" fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="896.0" cy="99.6" r="3.5" fill="var(--ink)"/></svg>
+    <div class="meter-l"><span>08.04</span><span>28.09</span></div>
+    
+  </div>
+  <div class="grid three" style="margin-top:12px">
+    <div class="card"><b>Trend skoru 75/100</b>
+      <div class="chk"><span class="d pos">✓</span><span>Fiyat 20 günlük ortalamanın üstünde <span class="neu">(10)</span></span></div><div class="chk"><span class="d pos">✓</span><span>Fiyat 50 günlük ortalamanın üstünde <span class="neu">(15)</span></span></div><div class="chk"><span class="d pos">✓</span><span>Fiyat 200 günlük ortalamanın üstünde <span class="neu">(15)</span></span></div><div class="chk"><span class="d pos">✓</span><span>50G > 200G (yükseliş dizilimi) <span class="neu">(15)</span></span></div><div class="chk"><span class="d pos">✓</span><span>200G ortalama yukarı eğimli <span class="neu">(10)</span></span></div><div class="chk"><span class="d neg">✗</span><span>52 haftalık bandın üst çeyreğinde (%73) <span class="neu">(10)</span></span></div><div class="chk"><span class="d pos">✓</span><span>RSI sağlıklı momentum bölgesinde (50–70) · 56 <span class="neu">(10)</span></span></div><div class="chk"><span class="d neg">✗</span><span>Son 3 ayda SPY'den iyi (−19,2 puan) <span class="neu">(15)</span></span></div>
+    </div>
+    <div class="card"><b>Fiyat haritası</b>
+      
+      
+        
+        <div class="lv direnc"><span>52H zirve</span><span class="mono">487,91 <span class="neu">+%24,5</span></span></div>
+      
+        
+        <div class="lv direnc"><span>Salınım tepesi</span><span class="mono">444,17 <span class="neu">+%13,4</span></span></div>
+      
+        
+        <div class="lv direnc"><span>Salınım tepesi</span><span class="mono">421,35 <span class="neu">+%7,5</span></span></div>
+      
+        
+        <div class="lv direnc"><span>Salınım tepesi</span><span class="mono">409,72 <span class="neu">+%4,6</span></span></div>
+      
+        <div class="lv now"><span>Şu an</span><span class="mono">391,78</span></div>
+        <div class="lv destek"><span>50G ortalama</span><span class="mono">370,39 <span class="neu">−%5,5</span></span></div>
+      
+        
+        <div class="lv destek"><span>Salınım dibi</span><span class="mono">340,34 <span class="neu">−%13,1</span></span></div>
+      
+        
+        <div class="lv destek"><span>200G ortalama</span><span class="mono">330,65 <span class="neu">−%15,6</span></span></div>
+      
+        
+        <div class="lv destek"><span>Salınım dibi</span><span class="mono">326,88 <span class="neu">−%16,6</span></span></div>
+      
+        
+        <div class="lv destek"><span>Salınım dibi</span><span class="mono">309,41 <span class="neu">−%21,0</span></span></div>
+      
+      
+    </div>
+    <div class="card"><b>Çıkış çizgileri</b>
+      
+      <div style="padding:8px 0;border-bottom:1px dashed var(--line)">
+        <div class="kv" style="border:0;padding:0"><span><b>ATR takip stopu (Chandelier)</b></span><span class="mono">344,08 <span class="neu">−%12,2</span></span></div>
+        <div style="font-size:12.5px;color:var(--muted)">Son 22 günün zirvesi − 3 × ATR(14). Kapanış altına inerse kısa vadeli trend bozulmuş sayılır.</div></div>
+      
+      <div style="padding:8px 0;border-bottom:1px dashed var(--line)">
+        <div class="kv" style="border:0;padding:0"><span><b>50 günlük ortalama kuralı</b></span><span class="mono">370,39 <span class="neu">−%5,5</span></span></div>
+        <div style="font-size:12.5px;color:var(--muted)">İki gün üst üste 50G altında kapanış: orta vadeli momentum kaybı.</div></div>
+      
+      <div style="padding:8px 0;border-bottom:1px dashed var(--line)">
+        <div class="kv" style="border:0;padding:0"><span><b>Yapı bozulma seviyesi</b></span><span class="mono">326,37 <span class="neu">−%16,7</span></span></div>
+        <div style="font-size:12.5px;color:var(--muted)">Son belirgin salınım dibi. Altına iniş, yükselen dip yapısını bozar.</div></div>
+      
+      <div style="padding:8px 0;border-bottom:1px dashed var(--line)">
+        <div class="kv" style="border:0;padding:0"><span><b>200 günlük ortalama</b></span><span class="mono">330,65 <span class="neu">−%15,6</span></span></div>
+        <div style="font-size:12.5px;color:var(--muted)">Uzun vadeli trend çizgisi. Altında kalıcılık, uzun vadeli tezin yeniden sorgulanması demek.</div></div>
+      
+    </div>
+  </div>
+</section>
+
+<!-- 04 ADİL DEĞER -->
+<section class="sec">
+  <div class="sec-no">04</div>
+  <h2>Adil değer</h2>
+  <p class="sub">Üç yöntemin ortalaması · güven = yöntemlerin birbirine yakınlığı · varsayımlar config.yaml → degerleme</p>
+  <div class="card"><div class="scroll"><table class="tbl">
+    <thead><tr><th>Yöntem</th><th>Değer</th><th>Fiyata göre</th><th>Nasıl hesaplandı</th></tr></thead>
+    <tbody>
+      <tr><td class="l"><b>F/K–büyüme</b></td><td class="mono">492,38 $</td><td class="mono pos">+%25,7</td>
+        <td class="l" style="font-size:12.5px;color:var(--muted);max-width:460px">İleri EPS 11,65 × hedef F/K 42,3 (= PEG 1.5 × beklenen büyüme %28,2, 12–45 aralığında)</td></tr>
+    
+      <tr><td class="l"><b>İndirgenmiş nakit akışı</b></td><td class="mono">203,92 $</td><td class="mono neg">−%48,0</td>
+        <td class="l" style="font-size:12.5px;color:var(--muted);max-width:460px">Serbest nakit akışı (12 ay) 0,8 mr $ · ilk yıl büyüme %28, 10 yılda %3'e iner · iskonto %10</td></tr>
+    
+      <tr><td class="l"><b>Analist medyan hedefi</b></td><td class="mono">450,00 $</td><td class="mono pos">+%14,9</td>
+        <td class="l" style="font-size:12.5px;color:var(--muted);max-width:460px">15 analistin 12 aylık hedef fiyat medyanı</td></tr>
+    
+    <tr><td class="l"><b>Harman</b></td><td class="mono"><b>382,10 $</b></td><td class="mono neg"><b>−%2,5</b></td><td class="l neu">güven 50/100</td></tr>
+    </tbody></table></div>
+    
+    <p class="src">Adil değer bir tahmindir; varsayımlardaki küçük değişiklikler sonucu büyük ölçüde değiştirir. Güven puanı 40'ın altındaysa yöntemler birbirinden çok farklı sonuç veriyor demektir — rakama fazla güvenme.</p>
+  </div>
+</section>
+
+<!-- 05 KAZANÇ -->
+<section class="sec">
+  <div class="sec-no">05</div>
+  <h2>Para kazanıyor mu?</h2>
+  <p class="sub">Çeyreklik gelir tablosu ve serbest nakit akışı · yıllık ciro büyümesi (CAGR) %0,4</p>
+  <div class="card">
+    
+    <svg class="chart" viewBox="0 0 1000 170" role="img" aria-label="Çeyreklik ciro"><rect x="6.0" y="86.2" width="188.0" height="63.8" rx="3" fill="var(--bar)"/><text x="100.0" y="81.2" text-anchor="middle" class="ax">651,8 Mn</text><text x="100.0" y="165" text-anchor="middle" class="ax">2025-06</text><rect x="206.0" y="74.8" width="188.0" height="75.2" rx="3" fill="var(--bar)"/><text x="300.0" y="69.8" text-anchor="middle" class="ax">769,2 Mn</text><text x="300.0" y="165" text-anchor="middle" class="ax">2025-09</text><rect x="406.0" y="44.0" width="188.0" height="106.0" rx="3" fill="var(--bar)"/><text x="500.0" y="39.0" text-anchor="middle" class="ax">1,1 Mr</text><text x="500.0" y="165" text-anchor="middle" class="ax">2025-12</text><rect x="606.0" y="24.5" width="188.0" height="125.5" rx="3" fill="var(--bar)"/><text x="700.0" y="19.5" text-anchor="middle" class="ax">1,3 Mr</text><text x="700.0" y="165" text-anchor="middle" class="ax">2026-03</text><rect x="806.0" y="20.0" width="188.0" height="130.0" rx="3" fill="var(--acc)"/><text x="900.0" y="15.0" text-anchor="middle" class="ax">1,3 Mr</text><text x="900.0" y="165" text-anchor="middle" class="ax">2026-06</text></svg>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th>Çeyrek</th><th>Ciro</th><th>Yıllık</th><th>Brüt marj</th><th>Faaliyet marjı</th><th>Net kâr</th><th>EPS</th><th>Serbest nakit</th></tr></thead>
+      <tbody>
+      <tr><td class="l mono">2026-06</td><td class="mono">1,3 Mr</td><td class="mono pos">+%103,9</td>
+        <td class="mono">%59,8</td><td class="mono">%33,2</td><td class="mono">374,5 Mn</td>
+        <td class="mono">2,38</td><td class="mono">378,4 Mn</td></tr>
+      
+      <tr><td class="l mono">2026-03</td><td class="mono">1,3 Mr</td><td class="mono neu">—</td>
+        <td class="mono">%60,9</td><td class="mono">%37,1</td><td class="mono">398,9 Mn</td>
+        <td class="mono">2,53</td><td class="mono">200,4 Mn</td></tr>
+      
+      <tr><td class="l mono">2025-12</td><td class="mono">1,1 Mr</td><td class="mono neu">—</td>
+        <td class="mono">%57,2</td><td class="mono">%28,5</td><td class="mono">257,2 Mn</td>
+        <td class="mono">1,63</td><td class="mono">218,8 Mn</td></tr>
+      
+      <tr><td class="l mono">2025-09</td><td class="mono">769,2 Mn</td><td class="mono neu">—</td>
+        <td class="mono">%58,4</td><td class="mono">%19,7</td><td class="mono">119,6 Mn</td>
+        <td class="mono">0,75</td><td class="mono">2,4 Mn</td></tr>
+      
+      <tr><td class="l mono">2025-06</td><td class="mono">651,8 Mn</td><td class="mono neu">—</td>
+        <td class="mono">%57,2</td><td class="mono">%14,3</td><td class="mono">78,4 Mn</td>
+        <td class="mono">0,49</td><td class="mono">131,7 Mn</td></tr>
+      </tbody></table></div>
+  </div>
+</section>
+
+<!-- 06 BİLANÇO -->
+<section class="sec">
+  <div class="sec-no">06</div>
+  <h2>Bilanço takvimi ve geçmiş</h2>
+  <p class="sub">Beklenti tutturma · açıklama sonrası ilk gün fiyat tepkisi</p>
+  <div class="grid two">
+    <div class="card">
+      <div class="kv"><span>Sonraki bilanço</span><span class="mono">2026-10-21 · 17 iş günü</span></div>
+      <div class="kv"><span>Opsiyonların fiyatladığı hareket</span><span class="mono">±%13,7 <span class="neu">(2026-10-23 vadesi)</span></span></div>
+      <div class="kv"><span>Beklentiyi aşma (son çeyrekler)</span><span class="mono">8/8</span></div>
+      <div class="kv"><span>Ortalama bilanço tepkisi</span><span class="mono">±%11,5</span></div>
+      <p class="src">Beklenen hareket = bilanço sonrası ilk vadenin başa baş (ATM) straddle fiyatı ÷ hisse fiyatı.</p>
+    </div>
+    <div class="card"><div class="scroll"><table class="tbl">
+      <thead><tr><th>Tarih</th><th>EPS beklenti</th><th>Gerçek</th><th>Sürpriz</th><th>Ertesi gün</th></tr></thead>
+      <tbody>
+        <tr><td class="l mono">2026-07-28</td><td class="mono">2,05</td><td class="mono">2,47</td>
+          <td class="mono pos">+%20,3</td><td class="mono neg">−%0,4</td></tr>
+      
+        <tr><td class="l mono">2026-04-28</td><td class="mono">2,12</td><td class="mono">2,56</td>
+          <td class="mono pos">+%20,9</td><td class="mono neg">−%19,4</td></tr>
+      
+        <tr><td class="l mono">2026-02-02</td><td class="mono">1,38</td><td class="mono">1,80</td>
+          <td class="mono pos">+%30,1</td><td class="mono pos">+%13,4</td></tr>
+      
+        <tr><td class="l mono">2025-10-28</td><td class="mono">0,79</td><td class="mono">0,85</td>
+          <td class="mono pos">+%7,5</td><td class="mono pos">+%20,5</td></tr>
+      
+        <tr><td class="l mono">2025-07-29</td><td class="mono">0,54</td><td class="mono">0,57</td>
+          <td class="mono pos">+%4,9</td><td class="mono pos">+%18,9</td></tr>
+      
+        <tr><td class="l mono">2025-04-28</td><td class="mono">0,62</td><td class="mono">0,75</td>
+          <td class="mono pos">+%21,7</td><td class="mono neg">−%2,5</td></tr>
+      
+        <tr><td class="l mono">2025-01-29</td><td class="mono">0,91</td><td class="mono">0,95</td>
+          <td class="mono pos">+%4,5</td><td class="mono neg">−%5,7</td></tr>
+      
+        <tr><td class="l mono">2024-10-23</td><td class="mono">0,79</td><td class="mono">0,90</td>
+          <td class="mono pos">+%14,2</td><td class="mono neg">−%11,0</td></tr>
+      </tbody></table></div></div>
+  </div>
+</section>
+
+<!-- 07 UZMANLAR -->
+<section class="sec">
+  <div class="sec-no">07</div>
+  <h2>Uzmanlar ne bekliyor?</h2>
+  <p class="sub">Analist tavsiye dağılımı · 12 aylık hedef fiyat aralığı · son 90 günde not değişiklikleri</p>
+  <div class="grid two">
+    <div class="card">
+      
+      <b>17 analist · %71 "Al"</b>
+      <div class="dist" style="margin-top:10px">
+        
+          <span style="width:5.88235294117647%;background:#0f8a5f" title="Güçlü Al 1">1</span>
+          <span style="width:64.70588235294117%;background:#34c38f" title="Al 11">11</span>
+          <span style="width:29.411764705882355%;background:#b7791f" title="Tut 5">5</span>
+          
+          
+      </div>
+      <div class="meter-l" style="margin-top:6px"><span>Güçlü Al · Al</span><span>Tut</span><span>Sat · Güçlü Sat</span></div>
+      
+      
+      
+      
+      <div class="rngbar">
+        <div class="fill" style="left:4.6255506607929515%;right:7.268722466960352%"></div>
+        <div class="mk" style="left:23.030836466650605%;background:var(--ink)"><b>392</b><i>fiyat</i></div>
+        <div class="mk" style="left:47.12188105726873%;background:var(--acc)"><b style="color:var(--acc)">446</b><i>ortalama</i></div>
+      </div>
+      <div class="kv"><span>En düşük / en yüksek hedef</span><span class="mono">350,00 (−%10,7) · 550,00 (+%40,4)</span></div>
+      <div class="kv"><span>Ortalama hedef</span><span class="mono">446,47 (+%14,0)</span></div>
+      
+    </div>
+    <div class="card"><b>Son 90 gün: 0 yükseltme · 1 düşürme</b>
+      <div class="kv"><span>21 Ağu · Baird</span><span class="mono">Outperform → <b>Neutral</b>
+        <span class="badge b-risk">düşürme</span></span></div>
+      <div class="kv"><span>30 Tem · Morgan Stanley</span><span class="mono">Equal-Weight → <b>Equal-Weight</b>
+        <span class="badge b-muted">koruma</span></span></div>
+      <div class="kv"><span>30 Tem · Evercore ISI Group</span><span class="mono">Outperform → <b>Outperform</b>
+        <span class="badge b-muted">koruma</span></span></div>
+      <div class="kv"><span>29 Tem · Cantor Fitzgerald</span><span class="mono">Overweight → <b>Overweight</b>
+        <span class="badge b-muted">teyit</span></span></div>
+      <div class="kv"><span>20 Tem · UBS</span><span class="mono">Buy → <b>Buy</b>
+        <span class="badge b-muted">koruma</span></span></div>
+      <div class="kv"><span>6 Tem · Goldman Sachs</span><span class="mono">Buy → <b>Buy</b>
+        <span class="badge b-muted">koruma</span></span></div>
+      <div class="kv"><span>30 Haz · Susquehanna</span><span class="mono">Positive → <b>Positive</b>
+        <span class="badge b-muted">koruma</span></span></div>
+      
+    </div>
+  </div>
+</section>
+
+<!-- 08 YÖNETİCİLER -->
+<section class="sec">
+  <div class="sec-no">08</div>
+  <h2>Yöneticiler ne yapıyor?</h2>
+  <p class="sub">İçeriden (insider) işlemler · son 90 gün · planlı (10b5-1) satışlar genelde önceden takvimlenmiştir</p>
+  <div class="card">
+    
+    <div class="kv"><span>Alım</span><span class="mono pos">0 işlem · 0 $</span></div>
+    <div class="kv"><span>Satış</span><span class="mono neg">9 işlem · 5,9 Mn $</span></div>
+    <div class="scroll" style="margin-top:8px"><table class="tbl"><thead><tr><th>Tarih</th><th>Kişi</th><th>Görev</th><th>İşlem</th><th>Değer</th></tr></thead>
+      <tbody><tr><td class="l mono">2026-09-15</td><td class="l">MATZ MARILYN</td><td class="l neu">Director</td>
+        <td class="neg">Satış</td><td class="mono">270,3 B</td></tr><tr><td class="l mono">2026-09-15</td><td class="l">SMITH GREGORY STEPHEN</td><td class="l neu">Chief Executive Officer</td>
+        <td class="neg">Satış</td><td class="mono">1,4 Mn</td></tr><tr><td class="l mono">2026-09-01</td><td class="l">JOHNSON MERCEDES</td><td class="l neu">Director</td>
+        <td class="neg">Satış</td><td class="mono">57,0 B</td></tr><tr><td class="l mono">2026-08-17</td><td class="l">MATZ MARILYN</td><td class="l neu">Director</td>
+        <td class="neg">Satış</td><td class="mono">510,0 B</td></tr><tr><td class="l mono">2026-08-17</td><td class="l">SMITH GREGORY STEPHEN</td><td class="l neu">Chief Executive Officer</td>
+        <td class="neg">Satış</td><td class="mono">1,7 Mn</td></tr><tr><td class="l mono">2026-08-03</td><td class="l">JOHNSON MERCEDES</td><td class="l neu">Director</td>
+        <td class="neg">Satış</td><td class="mono">59,5 B</td></tr><tr><td class="l mono">2026-07-15</td><td class="l">MATZ MARILYN</td><td class="l neu">Director</td>
+        <td class="neg">Satış</td><td class="mono">427,6 B</td></tr><tr><td class="l mono">2026-07-15</td><td class="l">SMITH GREGORY STEPHEN</td><td class="l neu">Chief Executive Officer</td>
+        <td class="neg">Satış</td><td class="mono">1,4 Mn</td></tr><tr><td class="l mono">2026-07-01</td><td class="l">JOHNSON MERCEDES</td><td class="l neu">Director</td>
+        <td class="neg">Satış</td><td class="mono">76,8 B</td></tr></tbody></table></div>
+    
+  </div>
+</section>
+
+<!-- 09 BÜYÜK PARA -->
+<section class="sec">
+  <div class="sec-no">09</div>
+  <h2>Büyük para nerede bekliyor?</h2>
+  <p class="sub">Opsiyon açık pozisyon haritası · en yakın 3 vade toplamı · fiyatın ±%20'si</p>
+  
+  <div class="grid two">
+    <div class="card">
+      <div class="kv"><span>Put duvarı (altta en büyük put yığılması)</span><span class="mono neg">350 $</span></div>
+      <div class="kv"><span>Call tavanı (üstte en büyük call yığılması)</span><span class="mono pos">410 $</span></div>
+      <div class="kv"><span>Put / Call açık pozisyon oranı</span><span class="mono">1,14</span></div>
+      <div class="kv"><span>Max pain (2026-10-02)</span><span class="mono">350 $</span></div>
+      <p class="src">Put duvarı çoğu zaman destek, call tavanı direnç gibi davranır; vade geçince etkisi kaybolur. Max pain: vadede opsiyon alıcılarının en çok kaybettiği fiyat.</p>
+    </div>
+    <div class="card"><div class="legend"><span><i style="background:var(--neg)"></i>Put</span><span><i style="background:var(--pos)"></i>Call</span><span>Kalın = güncel fiyata en yakın</span></div>
+      <svg class="chart" viewBox="0 0 520 472" role="img" aria-label="Opsiyon açık pozisyon haritası"><rect x="234.3" y="4" width="0.7" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="4" width="62.7" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="14" text-anchor="middle" class="ax" style="">470</text><rect x="235.0" y="20" width="0.0" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="20" width="3.0" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="30" text-anchor="middle" class="ax" style="">465</text><rect x="235.0" y="36" width="0.0" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="36" width="34.3" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="46" text-anchor="middle" class="ax" style="">455</text><rect x="231.8" y="52" width="3.2" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="52" width="98.5" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="62" text-anchor="middle" class="ax" style="">450</text><rect x="234.8" y="68" width="0.2" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="68" width="74.8" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="78" text-anchor="middle" class="ax" style="">440</text><rect x="234.5" y="84" width="0.5" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="84" width="11.4" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="94" text-anchor="middle" class="ax" style="">435</text><rect x="235.0" y="100" width="0.0" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="100" width="0.2" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="110" text-anchor="middle" class="ax" style="">428</text><rect x="235.0" y="116" width="0.0" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="116" width="0.7" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="126" text-anchor="middle" class="ax" style="">422</text><rect x="235.0" y="132" width="0.0" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="132" width="0.2" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="142" text-anchor="middle" class="ax" style="">418</text><rect x="232.0" y="148" width="3.0" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="148" width="1.2" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="158" text-anchor="middle" class="ax" style="">412</text><rect x="234.8" y="164" width="0.2" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="164" width="0.7" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="174" text-anchor="middle" class="ax" style="">408</text><rect x="235.0" y="180" width="0.0" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="180" width="3.7" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="190" text-anchor="middle" class="ax" style="">402</text><rect x="233.0" y="196" width="2.0" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="196" width="210.0" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="206" text-anchor="middle" class="ax" style="">398</text><rect x="233.3" y="212" width="1.7" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="212" width="3.2" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="222" text-anchor="middle" class="ax" style="fill:var(--ink);font-weight:700">392</text><rect x="235.0" y="228" width="0.0" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="228" width="1.7" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="238" text-anchor="middle" class="ax" style="fill:var(--ink);font-weight:700">388</text><rect x="232.5" y="244" width="2.5" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="244" width="1.2" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="254" text-anchor="middle" class="ax" style="">382</text><rect x="234.8" y="260" width="0.2" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="260" width="1.2" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="270" text-anchor="middle" class="ax" style="">378</text><rect x="234.3" y="276" width="0.7" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="276" width="1.2" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="286" text-anchor="middle" class="ax" style="">372</text><rect x="234.3" y="292" width="0.7" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="292" width="0.7" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="302" text-anchor="middle" class="ax" style="">368</text><rect x="232.5" y="308" width="2.5" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="308" width="0.2" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="318" text-anchor="middle" class="ax" style="">362</text><rect x="229.1" y="324" width="5.9" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="324" width="0.0" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="334" text-anchor="middle" class="ax" style="">358</text><rect x="153.8" y="340" width="81.2" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="340" width="0.0" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="350" text-anchor="middle" class="ax" style="">352</text><rect x="229.3" y="356" width="5.7" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="356" width="0.5" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="366" text-anchor="middle" class="ax" style="">348</text><rect x="232.3" y="372" width="2.7" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="372" width="0.0" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="382" text-anchor="middle" class="ax" style="">342</text><rect x="230.6" y="388" width="4.4" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="388" width="4.9" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="398" text-anchor="middle" class="ax" style="">338</text><rect x="234.0" y="404" width="1.0" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="404" width="0.0" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="414" text-anchor="middle" class="ax" style="">332</text><rect x="166.4" y="420" width="68.6" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="420" width="24.9" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="430" text-anchor="middle" class="ax" style="">325</text><rect x="87.7" y="436" width="147.3" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="436" width="35.0" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="446" text-anchor="middle" class="ax" style="">320</text><rect x="221.7" y="452" width="13.3" height="12" rx="2" fill="var(--neg)" opacity=".75"/><rect x="285.0" y="452" width="0.0" height="12" rx="2" fill="var(--pos)" opacity=".75"/><text x="260.0" y="462" text-anchor="middle" class="ax" style="">315</text></svg></div>
+  </div>
+  
+</section>
+
+<!-- 10 İZLE -->
+<section class="sec">
+  <div class="sec-no">10</div>
+  <h2>Bundan sonra izlenecekler</h2>
+  <div class="card"><ul class="story"><li>Bilanço 2026-10-21 (17 iş günü); opsiyonların fiyatladığı hareket ±%13,7.</li><li>ATR takip stopu (Chandelier): 344,08 $ (−%12,2).</li><li>50 günlük ortalama kuralı: 370,39 $ (−%5,5).</li><li>Opsiyon duvarları: put 350 $ · call 410 $.</li></ul></div>
+  <details class="card" style="margin-top:12px"><summary style="cursor:pointer;font-weight:600">Şirket ne yapar?</summary><p style="color:var(--muted);font-size:13.5px">Teradyne, Inc. engages in the design, development, manufacture, and sale of automated test systems and robotics products in the United States, Asia Pacific, Europe, the Middle East, and Africa. The company operates through Semiconductor Test, Robotics, and Other segments. The Semiconductor Test segment offers products and services for wafer level and device package testing, and system level testing of semiconductor devices in automotive, industrial, communications, consumer, smartphones, cloud, computer and electronic game, and other applications. This segment also provides FLEX test platform systems; J750 test system to address the volume semiconductor devices, including microcontrollers; M…</p></details>
+</section>
+
+<footer class="foot">Kaynak: Yahoo Finance (yfinance). Tüm sayılar kodla hesaplanır; yorum yalnızca bu sayılardan üretilir. Kişisel kullanım içindir, yatırım tavsiyesi değildir.</footer>
+</div>
+<script>
+(function(){const r=document.documentElement,btn=document.getElementById('themeBtn');
+  let t=null;try{t=localStorage.getItem('theme')}catch(e){}
+  if(t)r.dataset.theme=t;
+  btn.addEventListener('click',()=>{const dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;
+    r.dataset.theme=dark?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(e){}});})();
+</script>
+</body>
+</html>
