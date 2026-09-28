@@ -1,0 +1,47 @@
+name: Hisse Raporu
+
+on:
+  schedule:
+    - cron: "45 2 * * 1-5"   # Hafta içi 02:45 UTC = 05:45 TSİ
+  workflow_dispatch:
+    inputs:
+      semboller:
+        description: "Analiz edilecek semboller (boşlukla ayır, örn: AMD PLTR). Boş bırakılırsa portföy + izleme listesi."
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hisse-raporu
+  cancel-in-progress: false
+
+jobs:
+  rapor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Kütüphaneleri kur
+        run: pip install -r requirements.txt
+
+      - name: Hisse raporunu üret
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PYTHONUNBUFFERED: "1"
+        run: python -u rapor.py ${{ github.event.inputs.semboller }}
+
+      - name: Raporu kaydet
+        run: |
+          git config user.name "hisse-rapor-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs data
+          git commit -m "Hisse raporu $(TZ=Europe/Istanbul date +%F)" || echo "Değişiklik yok"
+          git push
