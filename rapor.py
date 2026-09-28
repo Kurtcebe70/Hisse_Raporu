@@ -49,6 +49,7 @@ def main() -> None:
     ozet_path = DATA / "ozet.json"
     ozet = json.loads(ozet_path.read_text()) if ozet_path.exists() else {}
     portfoy = set(cfg.get("portfoy", []))
+    bu_calisma: list[str] = []
     ortak = {"cfg": cfg, "makro_url": cfg.get("makro_rapor_url") or ""}
 
     for kind, src in kaynaklar:
@@ -65,13 +66,18 @@ def main() -> None:
                                  "karne": s["karne"]["skor"], "trend": s["trend"]["skor"], "asama": s["trend"]["asama"],
                                  "adil_fark": s["adil"].get("fark"), "tarih": s["trend"]["tarih"],
                                  "bilanco": s["bilanco"]["sonraki"], "ozet": yorum.get("ozet", ""),
-                                 "tez": s["tez"]["saglam"] if s["tez"].get("var") and s["tez"].get("kural_sonuc") else None}
+                                 "tez": s["tez"]["saglam"] if s["tez"].get("var") and s["tez"].get("kural_sonuc") else None,
+                                 "tez_uyarilari": [r["ad"] for r in s["tez"].get("kural_sonuc", []) if r["durum"] == "UYARI"],
+                                 "bilanco_gun": s["bilanco"].get("is_gunu"),
+                                 "trend_uyarilari": s["trend"]["uyarilar"]}
+            bu_calisma.append(s["sembol"])
             print(f"  ✓ karne {s['karne']['skor']} · trend {s['trend']['skor']} · adil değer {s['adil'].get('fark')}")
         except Exception as e:
             print(f"  ! {src} atlandı: {e}")
             traceback.print_exc(limit=3)
 
     ozet_path.write_text(json.dumps(ozet, ensure_ascii=False, indent=1))
+    (DATA / "son_calisma.json").write_text(json.dumps(bu_calisma))
     for e in ozet.values():
         e["portfoyde"] = e["sembol"] in portfoy
     entries = sorted(ozet.values(), key=lambda e: (not e["portfoyde"], -(e.get("karne") or 0)))
