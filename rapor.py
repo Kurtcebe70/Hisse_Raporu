@@ -92,9 +92,17 @@ def main() -> None:
     (DATA / "son_calisma.json").write_text(json.dumps(bu_calisma))
     for e in ozet.values():
         e["portfoyde"] = e["sembol"] in portfoy
+    tema_map = {sym: tema for tema, syms in (cfg.get("temalar") or {}).items() for sym in (syms or [])}
+    tema_sira = list((cfg.get("temalar") or {}).keys()) + ["Diğer"]
+    for e in ozet.values():
+        e["tema"] = tema_map.get(e["sembol"], "Diğer")
     entries = sorted(ozet.values(), key=lambda e: (not e["portfoyde"], -(e.get("karne") or 0)))
+    gruplar = [(t, [e for e in entries if not e["portfoyde"] and e["tema"] == t]) for t in tema_sira]
+    gruplar = [(t, g) for t, g in gruplar if g]
     simdi = datetime.now(ZoneInfo("Europe/Istanbul")).strftime("%d.%m.%Y %H:%M")
-    (DOCS / "index.html").write_text(render("index.html.j2", {**ortak, "entries": entries, "simdi": simdi}, TPL),
+    (DOCS / "index.html").write_text(render("index.html.j2", {**ortak, "entries": entries, "simdi": simdi,
+                                                                "gruplar": gruplar,
+                                                                "temalar": [t for t in tema_sira if any(e["tema"] == t for e in entries)]}, TPL),
                                      encoding="utf-8")
     print("Tamam → docs/index.html")
 

@@ -19,6 +19,20 @@ izleme_listesi: [TSM, GEV, PWR, PLTR, NOW, FTNT, AVGO, KLAC, ANET, CRDO,
                  NBIS, TSLA, UMAC, ONDS, RCAT, AKAM, EROC, SECZ, LPTH, ONTO,
                  LUNR, ALMU]
 
+# Temalar — ana sayfada gruplama ve filtre için. Listede olmayan hisse "Diğer" grubuna düşer.
+# Yeni hisse eklediğinde uygun temaya yazman yeterli; yeni tema da açabilirsin.
+temalar:
+  "Yarı iletken ve AI çipleri": [NVDA, AMD, AVGO, TSM, QCOM, MU, MRVL, KLAC, TER, ONTO, CRDO, ALMU]
+  "AI altyapı, ağ ve bulut": [ANET, NBIS, NET, AKAM, LPTH]
+  "Yazılım ve AI platformları": [PLTR, NOW, TEM, ANTW]
+  "Siber güvenlik": [CRWD, PANW, FTNT]
+  "Enerji ve elektrifikasyon": [VRT, GEV, ETN, PWR, VST, CEG, BE, SMR]
+  "Uzay": [SPCX, RKLB, ASTS, PL, LUNR]
+  "Savunma ve drone": [KTOS, AVAV, LMT, UMAC, ONDS, RCAT]
+  "Robotik ve otomasyon": [ISRG, SYM, TSLA]
+  "Kuantum": [INFQ]
+  "Fintek ve tokenizasyon": [SECZ]
+
 # Karne ağırlıkları (%)
 karne_agirliklari: {Büyüme: 20, Kârlılık: 20, Bilanço: 10, Değerleme: 20, Trend: 15, Beklenti: 15}
 
