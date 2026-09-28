@@ -36,6 +36,7 @@ def main() -> None:
     cfg = yaml.safe_load((ROOT / "config.yaml").read_text(encoding="utf-8"))
     tezler = yaml.safe_load((ROOT / "tezler.yaml").read_text(encoding="utf-8")) or {} if (ROOT / "tezler.yaml").exists() else {}
 
+    liste_modu = not args.snapshot and not args.semboller
     if args.snapshot:
         kaynaklar = [("snap", p) for p in args.snapshot]
     else:
@@ -48,6 +49,7 @@ def main() -> None:
     DATA.mkdir(parents=True, exist_ok=True)
     ozet_path = DATA / "ozet.json"
     ozet = json.loads(ozet_path.read_text()) if ozet_path.exists() else {}
+    listeler = set(cfg.get("portfoy", [])) | set(cfg.get("izleme_listesi", []))
     portfoy = set(cfg.get("portfoy", []))
     bu_calisma: list[str] = []
     ortak = {"cfg": cfg, "makro_url": cfg.get("makro_rapor_url") or ""}
@@ -70,12 +72,19 @@ def main() -> None:
                                  "tez_uyarilari": [r["ad"] for r in s["tez"].get("kural_sonuc", []) if r["durum"] == "UYARI"],
                                  "bilanco_gun": s["bilanco"].get("is_gunu"),
                                  "trend_uyarilari": s["trend"]["uyarilar"]}
+            ozet[s["sembol"]]["kaynak"] = "liste" if s["sembol"] in listeler else "elle"
             bu_calisma.append(s["sembol"])
             print(f"  ✓ karne {s['karne']['skor']} · trend {s['trend']['skor']} · adil değer {s['adil'].get('fark')}")
         except Exception as e:
             print(f"  ! {src} atlandı: {e}")
             traceback.print_exc(limit=3)
 
+    if liste_modu:
+        # Listelerden çıkarılan hisseleri kaldır; elle analiz ettirilenler (kaynak=elle) kalır.
+        for sym in [k for k, v in ozet.items() if k not in listeler and v.get("kaynak", "liste") == "liste"]:
+            del ozet[sym]
+            (DOCS / f"{sym}.html").unlink(missing_ok=True)
+            print(f"  − {sym} listeden çıkarıldı")
     ozet_path.write_text(json.dumps(ozet, ensure_ascii=False, indent=1))
     (DATA / "son_calisma.json").write_text(json.dumps(bu_calisma))
     for e in ozet.values():

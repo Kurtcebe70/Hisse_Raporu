@@ -9,20 +9,19 @@
 #  op: "<" (değer bunun altına düşerse UYARI) veya ">" (üstüne çıkarsa UYARI)
 #
 #  maliyet / adet: isteğe bağlı, pozisyon kâr/zararını göstermek için
+#  (başındaki "# " işaretini silip doldur; ondalık için nokta kullan: 228.20)
+#
+#  Aşağıdaki kural eşikleri başlangıç için konmuş örneklerdir — kendine göre değiştir.
 # ============================================================
 
-NVDA:
-  tema: "AI hesaplama"
-  tez: "BURAYA KENDİ TEZİNİ YAZ — örn. veri merkezi talebinin sürmesi, yazılım ekosistemi avantajı."
+SPCX:
+  tema: "Uzay (SpaceX)"
+  tez: "BURAYA KENDİ TEZİNİ YAZ"
   izlenecek:
-    - "Veri merkezi gelir büyümesi"
-    - "Brüt marj"
-  bozulma:
-    - "Brüt marjın iki çeyrek üst üste belirgin düşmesi"
+    - "Ciro büyümesi"
   kurallar:
-    - {ad: "Brüt marj %65 altı", metrik: brut_marj, op: "<", deger: 65}
-    - {ad: "Ciro büyümesi %20 altı", metrik: ciro_buyume, op: "<", deger: 20}
-    - {ad: "Trend skoru 40 altı", metrik: trend_skoru, op: "<", deger: 40}
+    - {ad: "Ciro büyümesi %15 altı", metrik: ciro_buyume, op: "<", deger: 15}
+    - {ad: "Zirveden %35'ten fazla düşüş", metrik: zirveden, op: "<", deger: -35}
   # maliyet: 0
   # adet: 0
 
@@ -32,21 +31,54 @@ VRT:
   kurallar:
     - {ad: "Ciro büyümesi %10 altı", metrik: ciro_buyume, op: "<", deger: 10}
     - {ad: "Trend skoru 40 altı", metrik: trend_skoru, op: "<", deger: 40}
+  # maliyet: 0
+  # adet: 0
 
-ETN:
-  tema: "Elektrifikasyon"
+NVDA:
+  tema: "AI hesaplama"
   tez: "BURAYA KENDİ TEZİNİ YAZ"
+  izlenecek:
+    - "Veri merkezi gelir büyümesi"
+    - "Brüt marj"
   kurallar:
-    - {ad: "Faaliyet marjı %15 altı", metrik: faaliyet_marj, op: "<", deger: 15}
-
-GEV:
-  tema: "Enerji üretimi / şebeke"
-  tez: "BURAYA KENDİ TEZİNİ YAZ"
-  kurallar:
+    - {ad: "Brüt marj %65 altı", metrik: brut_marj, op: "<", deger: 65}
+    - {ad: "Ciro büyümesi %20 altı", metrik: ciro_buyume, op: "<", deger: 20}
     - {ad: "Trend skoru 40 altı", metrik: trend_skoru, op: "<", deger: 40}
+  # maliyet: 0
+  # adet: 0
 
-MU:
-  tema: "Bellek (HBM)"
+QCOM:
+  tema: "Mobil / uç cihaz AI çipleri"
   tez: "BURAYA KENDİ TEZİNİ YAZ"
   kurallar:
-    - {ad: "Brüt marj %35 altı", metrik: brut_marj, op: "<", deger: 35}
+    - {ad: "Faaliyet marjı %20 altı", metrik: faaliyet_marj, op: "<", deger: 20}
+    - {ad: "Trend skoru 40 altı", metrik: trend_skoru, op: "<", deger: 40}
+  # maliyet: 0
+  # adet: 0
+
+ANTW:
+  tema: "Anthropic AI ekosistemi (ETF)"
+  tez: "BURAYA KENDİ TEZİNİ YAZ"
+  # ETF olduğu için şirket bilançosu yok; sadece fiyat/trend kuralları anlamlı
+  kurallar:
+    - {ad: "Zirveden %20'den fazla düşüş", metrik: zirveden, op: "<", deger: -20}
+  # maliyet: 0
+  # adet: 0
+
+RKLB:
+  tema: "Uzay fırlatma ve uydu"
+  tez: "BURAYA KENDİ TEZİNİ YAZ"
+  kurallar:
+    - {ad: "Ciro büyümesi %20 altı", metrik: ciro_buyume, op: "<", deger: 20}
+    - {ad: "Trend skoru 40 altı", metrik: trend_skoru, op: "<", deger: 40}
+  # maliyet: 0
+  # adet: 0
+
+ISRG:
+  tema: "Robotik cerrahi"
+  tez: "BURAYA KENDİ TEZİNİ YAZ"
+  kurallar:
+    - {ad: "Ciro büyümesi %10 altı", metrik: ciro_buyume, op: "<", deger: 10}
+    - {ad: "Brüt marj %60 altı", metrik: brut_marj, op: "<", deger: 60}
+  # maliyet: 0
+  # adet: 0
