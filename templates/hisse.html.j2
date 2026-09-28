@@ -181,12 +181,13 @@
   <div class="card"><div class="scroll"><table class="tbl">
     <thead><tr><th>Yöntem</th><th>Değer</th><th>Fiyata göre</th><th>Nasıl hesaplandı</th></tr></thead>
     <tbody>{% for x in fv.yontemler %}
-      <tr><td class="l"><b>{{ x.ad }}</b></td><td class="mono">{{ x.deger|num(2) }} $</td><td class="mono {{ x.fark|pct_tone }}">{{ x.fark|spct(1) }}</td>
+      <tr{% if x.dislandi %} style="opacity:.55"{% endif %}><td class="l"><b>{{ x.ad }}</b>{% if x.dislandi %} <span class="badge b-warn">dışarıda</span>{% endif %}</td><td class="mono">{{ x.deger|num(2) }} $</td><td class="mono {{ x.fark|pct_tone }}">{{ x.fark|spct(1) }}</td>
         <td class="l" style="font-size:12.5px;color:var(--muted);max-width:460px">{{ x.aciklama }}</td></tr>
     {% else %}<tr><td colspan="4" class="neu l">Adil değer hesaplanamadı (kâr veya nakit akışı negatif olabilir).</td></tr>{% endfor %}
     {% if fv.deger %}<tr><td class="l"><b>Harman</b></td><td class="mono"><b>{{ fv.deger|num(2) }} $</b></td><td class="mono {{ fv.fark|pct_tone }}"><b>{{ fv.fark|spct(1) }}</b></td><td class="l neu">güven {{ fv.guven }}/100</td></tr>{% endif %}
     </tbody></table></div>
-    <p class="src">Adil değer bir tahmindir; varsayımlardaki küçük değişiklikler sonucu büyük ölçüde değiştirir.</p>
+    {% for n in fv.notlar or [] %}<div class="note" style="background:var(--warn-bg)">⚠ {{ n }}</div>{% endfor %}
+    <p class="src">Adil değer bir tahmindir; varsayımlardaki küçük değişiklikler sonucu büyük ölçüde değiştirir. Güven puanı 40'ın altındaysa yöntemler birbirinden çok farklı sonuç veriyor demektir — rakama fazla güvenme.</p>
   </div>
 </section>
 
