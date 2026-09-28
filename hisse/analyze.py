@@ -82,10 +82,11 @@ def trend_block(h: pd.DataFrame, bench: pd.Series) -> dict:
     pos52 = round((p - lo52) / (hi52 - lo52) * 100) if hi52 > lo52 else 50
     rsi = _rsi(c)
     rel = None
-    if bench is not None and len(bench) > 64:
+    if bench is not None and len(bench) > 64 and len(c) > 64:
         b = bench.reindex(c.index, method="ffill").dropna()
         a = c.reindex(b.index)
-        rel = round(_pct(a.iloc[-1], a.iloc[-64]) - _pct(b.iloc[-1], b.iloc[-64]), 1)
+        if len(a) > 64:
+            rel = round(_pct(a.iloc[-1], a.iloc[-64]) - _pct(b.iloc[-1], b.iloc[-64]), 1)
 
     puan, detay = 0, []
     def add(ok, pts, txt):
@@ -103,7 +104,11 @@ def trend_block(h: pd.DataFrame, bench: pd.Series) -> dict:
     add(rel is not None and rel > 0, 15, f"Son 3 ayda SPY'den iyi ({'+' if (rel or 0) >= 0 else ''}{fmt_num(rel, 1)} puan)")
 
     uzama = _pct(p, ma[200]) if 200 in ma else None
-    if p > ma.get(50, 1e18) > ma.get(200, 1e18):
+    if 50 not in ma:
+        asama = "Yetersiz geçmiş"
+    elif 200 not in ma:
+        asama = "Yükseliş (kısa geçmiş)" if p > ma[50] else "Zayıf (kısa geçmiş)"
+    elif p > ma.get(50, 1e18) > ma.get(200, 1e18):
         asama = "Güçlü yükseliş"
     elif p > ma.get(200, 1e18):
         asama = "Yükseliş (düzeltmede)"
@@ -150,11 +155,14 @@ def trend_block(h: pd.DataFrame, bench: pd.Series) -> dict:
     etiket = ("Güçlü" if puan >= 75 else "Olumlu" if puan >= 55 else "Kararsız" if puan >= 40 else "Zayıf")
     ch = {"Fiyat": c, "20G": c.rolling(20).mean(), "50G": c.rolling(50).mean(), "200G": c.rolling(200).mean()}
     seriler = {k: [None if pd.isna(v) else round(float(v), 2) for v in s.tail(120)] for k, s in ch.items()}
-    return {"fiyat": p, "gun": _pct(c.iloc[-1], c.iloc[-2]), "ma": ma, "rsi": rsi, "rel_3a": rel,
+    kisa = len(c) < 200
+    if kisa:
+        uyarilar.append(f"İşlem geçmişi kısa ({len(c)} gün) — 200 günlük ortalama ve bazı trend ölçüleri hesaplanamıyor")
+    return {"fiyat": p, "gun": _pct(c.iloc[-1], c.iloc[-2]), "ma": ma, "rsi": rsi, "rel_3a": rel, "gun_sayisi": len(c),
             "lo52": lo52, "hi52": hi52, "pos52": pos52, "skor": puan, "etiket": etiket, "detay": detay,
             "asama": asama, "uyarilar": uyarilar, "seviyeler": seviyeler, "cikis": cikis, "atr": atr,
             "seriler": seriler, "tarih": c.index[-1].strftime("%Y-%m-%d"),
-            "ilk_tarih": c.index[-120].strftime("%d.%m") if len(c) >= 120 else "",
+            "ilk_tarih": c.index[-min(120, len(c))].strftime("%d.%m"),
             "son_tarih": c.index[-1].strftime("%d.%m")}
 
 
@@ -448,10 +456,13 @@ def analyze_stock(d: dict, cfg: dict, tez: dict | None) -> dict:
     er = earnings(d, h)
     op = options_map(d, price, er["sonraki"])
     sc = scorecard(cfg, m, fv, tr, an)
+    etf = (info.get("quoteType") or "").upper() == "ETF"
+    if etf:  # fon: şirket karnesi anlamlı değil
+        sc = {"skor": None, "ayaklar": {"Trend": sc["ayaklar"].get("Trend")}, "agirlik": {"Trend": 100}, "etf": True}
     th = thesis(tez, {**m, "adil_deger_fark": fv.get("fark"), "karne": sc["skor"]})
     maliyet = _num((tez or {}).get("maliyet"))
     return {
-        "sembol": d["sembol"], "alindi": d["alindi"], "ad": info.get("longName") or info.get("shortName") or d["sembol"],
+        "etf": etf, "sembol": d["sembol"], "alindi": d["alindi"], "ad": info.get("longName") or info.get("shortName") or d["sembol"],
         "borsa": info.get("exchange"), "sektor": info.get("sector"), "endustri": info.get("industry"),
         "ozet_is": (info.get("longBusinessSummary") or "")[:700], "fiyat": price, "gun": tr["gun"],
         "metrikler": m, "trend": tr, "finans": fin, "adil": fv, "analist": an, "insider": insiders(d),

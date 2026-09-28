@@ -73,7 +73,9 @@ def stock_template(s: dict) -> dict:
     zayif += t["uyarilar"]
     if ins.get("var") and ins["alim_sayi"] == 0 and ins["satis_sayi"] > 0:
         zayif.append(f"Son 90 günde yönetici alımı yok; {ins['satis_sayi']} satış ({fmt_num(ins['satis_deger'] / 1e6, 1)} milyon $).")
-    ozet = (f"{s['sembol']} karne puanı {s['karne']['skor']}/100, trend skoru {t['skor']}/100 ({t['asama']}). "
+    karne_txt = ("fon (ETF) olduğu için şirket karnesi uygulanmıyor" if s.get("etf") else
+                 f"karne puanı {s['karne']['skor']}/100" if s["karne"]["skor"] is not None else "karne hesaplanamadı")
+    ozet = (f"{s['sembol']} {karne_txt}, trend skoru {t['skor']}/100 ({t['asama']}). "
             + (f"Adil değer harmanı {fmt_num(fv['deger'], 2)} $ — fiyata göre {_sp(fv['fark'])} (güven {fv['guven']}/100). " if fv.get("deger") else "")
             + (f"Analistlerin %{an['al_orani']}'i 'Al' diyor." if an.get("al_orani") is not None else ""))
     izle = []
