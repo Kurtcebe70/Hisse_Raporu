@@ -207,7 +207,9 @@ def fair_value(d: dict, fin: dict, cfg: dict, price: float, growth_pct: float | 
                                     f"(= PEG {dv.get('hedef_peg', 1.5)} × beklenen büyüme %{fmt_num(growth_pct, 1)}, {dv.get('fk_min', 12)}–{dv.get('fk_max', 45)} aralığında)"})
     fcf = fin.get("fcf_ttm") or _num(info.get("freeCashflow"))
     shares = _num(info.get("sharesOutstanding"))
-    if fcf and fcf > 0 and shares:
+    fin_cur, px_cur = (info.get("financialCurrency") or "USD"), (info.get("currency") or "USD")
+    ayni_para = fin_cur.upper() == px_cur.upper()  # ör. TSM: tablolar TWD, fiyat USD → DCF yanıltır
+    if fcf and fcf > 0 and shares and ayni_para:
         r, tg = dv.get("iskonto", 0.10), dv.get("terminal_buyume", 0.03)
         g1 = min(max((growth_pct or 10) / 100, 0.0), dv.get("dcf_max_buyume", 0.30))
         pv, f = 0.0, fcf
@@ -225,15 +227,25 @@ def fair_value(d: dict, fin: dict, cfg: dict, price: float, growth_pct: float | 
     if at:
         methods.append({"ad": "Analist medyan hedefi", "deger": at,
                         "aciklama": f"{info.get('numberOfAnalystOpinions', '—')} analistin 12 aylık hedef fiyat medyanı"})
+    notlar = []
+    if not ayni_para and fcf:
+        notlar.append(f"Mali tablolar {fin_cur}, fiyat {px_cur} cinsinden — nakit akışı yöntemi kullanılmadı.")
     if not methods:
-        return {"yontemler": [], "deger": None}
-    vals = np.array([m["deger"] for m in methods])
-    blend = float(vals.mean())
-    cv = float(vals.std() / blend) if blend else 1
-    guven = int(max(0, min(100, 100 - cv * 150 - (3 - len(methods)) * 15)))
+        return {"yontemler": [], "deger": None, "notlar": notlar}
+    uc_sinir = dv.get("uc_deger_sinir", 100)  # fiyattan %100'den fazla sapan yöntem harmana girmez
     for m in methods:
         m["fark"] = _pct(m["deger"], price)
-    return {"yontemler": methods, "deger": blend, "fark": _pct(blend, price), "guven": guven}
+        m["dislandi"] = abs(m["fark"]) > uc_sinir
+        if m["dislandi"]:
+            m["aciklama"] += f" · fiyattan %{fmt_num(abs(m['fark']), 0)} saptığı için uç değer sayıldı, harmana katılmadı"
+    kullan = [m for m in methods if not m["dislandi"]]
+    if not kullan:
+        return {"yontemler": methods, "deger": None, "notlar": notlar + ["Tüm yöntemler uç değer verdi; adil değer hesaplanmadı."]}
+    vals = np.array([m["deger"] for m in kullan])
+    blend = float(vals.mean())
+    cv = float(vals.std() / blend) if blend else 1
+    guven = int(max(0, min(100, 100 - cv * 150 - (3 - len(kullan)) * 15)))
+    return {"yontemler": methods, "deger": blend, "fark": _pct(blend, price), "guven": guven, "notlar": notlar}
 
 
 # ------------------------------------------------------------------ analist / insider / bilanço / opsiyon
@@ -456,7 +468,9 @@ def analyze_stock(d: dict, cfg: dict, tez: dict | None) -> dict:
     er = earnings(d, h)
     op = options_map(d, price, er["sonraki"])
     sc = scorecard(cfg, m, fv, tr, an)
-    etf = (info.get("quoteType") or "").upper() == "ETF"
+    ad = f"{info.get('longName') or ''} {info.get('shortName') or ''}".upper()
+    etf = ((info.get("quoteType") or "").upper() in ("ETF", "MUTUALFUND") or " ETF" in ad
+           or bool(info.get("fundFamily")) or info.get("legalType") == "Exchange Traded Fund")
     if etf:  # fon: şirket karnesi anlamlı değil
         sc = {"skor": None, "ayaklar": {"Trend": sc["ayaklar"].get("Trend")}, "agirlik": {"Trend": 100}, "etf": True}
     th = thesis(tez, {**m, "adil_deger_fark": fv.get("fark"), "karne": sc["skor"]})
