@@ -13,7 +13,11 @@ makro_rapor_url: "https://kurtcebe70.github.io/Makro_Rapor/"
 
 # Her sabah otomatik analiz edilecek hisseler
 portfoy: [SPCX, VRT, NVDA, QCOM, ANTW, RKLB, ISRG]
-izleme_listesi: [AVGO, TSM]
+izleme_listesi: [TSM, GEV, PWR, PLTR, NOW, FTNT, AVGO, KLAC, ANET, CRDO,
+                 AMD, MU, VST, CEG, TER, CRWD, PANW, MRVL, ETN, SYM,
+                 NET, BE, INFQ, PL, KTOS, AVAV, TEM, LMT, ASTS, SMR,
+                 NBIS, TSLA, UMAC, ONDS, RCAT, AKAM, EROC, SECZ, LPTH, ONTO,
+                 LUNR, ALMU]
 
 # Karne ağırlıkları (%)
 karne_agirliklari: {Büyüme: 20, Kârlılık: 20, Bilanço: 10, Değerleme: 20, Trend: 15, Beklenti: 15}

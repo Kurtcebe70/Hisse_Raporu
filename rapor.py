@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import time
 import traceback
 from datetime import datetime
 from pathlib import Path
@@ -74,6 +75,8 @@ def main() -> None:
                                  "trend_uyarilari": s["trend"]["uyarilar"]}
             ozet[s["sembol"]]["kaynak"] = "liste" if s["sembol"] in listeler else "elle"
             bu_calisma.append(s["sembol"])
+            if kind == "yf":
+                time.sleep(0.5)  # Yahoo'yu çok hızlı sorgulamamak için kısa ara
             print(f"  ✓ karne {s['karne']['skor']} · trend {s['trend']['skor']} · adil değer {s['adil'].get('fark')}")
         except Exception as e:
             print(f"  ! {src} atlandı: {e}")
