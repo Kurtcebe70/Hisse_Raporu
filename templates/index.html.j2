@@ -8,11 +8,21 @@
 .cards{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
 .sc-card{display:block;color:inherit;text-decoration:none;transition:border-color .15s}
 .sc-card:hover{border-color:var(--acc)}
+.sc-card[hidden],.grup[hidden]{display:none}
 .sc-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .sc-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0 8px}
 .sc-nums div{background:var(--panel2);border-radius:8px;padding:8px}
 .sc-nums small{display:block;font-size:10.5px;color:var(--faint);font-family:"JetBrains Mono",monospace;letter-spacing:.06em}
 .sc-nums b{font:600 17px "JetBrains Mono",monospace}
+.araclar{position:sticky;top:8px;z-index:5;margin-top:20px;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+.araclar input,.araclar select{font:inherit;font-size:14px;padding:9px 12px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);min-width:0}
+.araclar input:focus,.araclar select:focus{outline:2px solid var(--acc);outline-offset:0}
+.chips-row{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap}
+.tchip{font:500 12.5px Inter,sans-serif;padding:6px 10px;border-radius:99px;border:1px solid var(--line);background:var(--panel);color:var(--muted);cursor:pointer}
+.tchip span{font-family:"JetBrains Mono",monospace;font-size:11px;opacity:.7;margin-left:3px}
+.tchip.on{background:var(--acc-bg);color:var(--acc);border-color:var(--acc)}
+#sayac{grid-column:1/-1}
+@media (max-width:560px){.araclar{grid-template-columns:1fr}}
 .sc-card p{font-size:13px;color:var(--muted);margin:6px 0 0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 </style>
 </head><body><div class="wrap">
@@ -28,36 +38,89 @@
   </div>
 </header>
 
-{% for grup, baslik in ((true, 'Portföy'), (false, 'İzleme listesi ve diğerleri')) %}
-{% set liste = entries|selectattr('portfoyde', 'equalto', grup)|list %}
-{% if liste %}
-<section class="sec">
-  <h2>{{ baslik }}</h2>
-  <p class="sub">{{ liste|length }} hisse · karta tıkla</p>
-  <div class="grid cards">
-  {% for e in liste %}
-    <a class="card sc-card" href="{{ e.sembol }}.html">
+{% macro kart(e) %}
+    <a class="card sc-card" href="{{ e.sembol }}.html" data-sym="{{ e.sembol }}" data-ad="{{ e.ad|lower }}" data-tema="{{ e.tema }}"
+       data-karne="{{ e.karne if e.karne is not none else -1 }}" data-trend="{{ e.trend }}" data-gun="{{ e.gun or 0 }}"
+       data-adil="{{ e.adil_fark if e.adil_fark is not none else -999 }}">
       <div class="sc-top"><div><b style="font-size:18px">{{ e.sembol }}</b> <span class="neu" style="font-size:12.5px">{{ e.ad }}</span></div>
         <span class="mono">{{ e.fiyat|num(2) }} <span class="{{ e.gun|pct_tone }}">{{ e.gun|spct(1) }}</span></span></div>
       <div class="sc-nums">
-        <div><small>KARNE</small><b class="{{ 'pos' if (e.karne or 0)>=70 else ('neg' if (e.karne or 0)<45 else '') }}">{{ e.karne if e.karne is not none else '—' }}</b></div>
+        <div><small>KARNE</small><b class="{{ 'pos' if (e.karne or 0)>=70 else ('neg' if e.karne is not none and e.karne<45 else '') }}">{{ e.karne if e.karne is not none else '—' }}</b></div>
         <div><small>TREND</small><b class="{{ 'pos' if e.trend>=70 else ('neg' if e.trend<40 else '') }}">{{ e.trend }}</b></div>
         <div><small>ADİL DEĞER</small><b class="{{ e.adil_fark|pct_tone }}">{{ e.adil_fark|spct(0) }}</b></div>
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span class="badge b-muted">{{ e.tema }}</span>
         <span class="badge b-muted">{{ e.asama }}</span>
         {% if e.tez is not none %}<span class="badge {{ 'b-ok' if e.tez else 'b-risk' }}">tez {{ 'sağlam' if e.tez else 'uyarı' }}</span>{% endif %}
         {% if e.bilanco %}<span class="badge b-acc">bilanço {{ e.bilanco|sdate }}</span>{% endif %}
-        <span class="badge b-muted">veri {{ e.tarih|sdate }}</span>
       </div>
       {% if e.ozet %}<p>{{ e.ozet }}</p>{% endif %}
     </a>
-  {% endfor %}
+{% endmacro %}
+
+<div class="araclar card">
+  <input id="ara" type="search" placeholder="Ara: sembol veya şirket adı (ör. NVDA, Palantir)" autocomplete="off">
+  <select id="sirala" aria-label="Sıralama">
+    <option value="karne">Sırala: Karne</option>
+    <option value="trend">Sırala: Trend</option>
+    <option value="gun">Sırala: Günlük değişim</option>
+    <option value="adil">Sırala: Adil değer farkı</option>
+    <option value="sym">Sırala: Sembol (A–Z)</option>
+  </select>
+  <div class="chips-row" id="temalar">
+    <button type="button" class="tchip on" data-t="">Tümü <span>{{ entries|length }}</span></button>
+    {% for t in temalar %}<button type="button" class="tchip" data-t="{{ t }}">{{ t }} <span>{{ entries|selectattr('tema','equalto',t)|list|length }}</span></button>{% endfor %}
   </div>
+  <div class="neu" id="sayac" style="font-size:12.5px"></div>
+</div>
+
+{% set port = entries|selectattr('portfoyde', 'equalto', true)|list %}
+{% if port %}
+<section class="sec grup">
+  <h2>💼 Portföy</h2>
+  <p class="sub">{{ port|length }} hisse</p>
+  <div class="grid cards">{% for e in port %}{{ kart(e) }}{% endfor %}</div>
 </section>
 {% endif %}
+
+{% for tema, liste in gruplar %}
+<section class="sec grup">
+  <h2>{{ tema }}</h2>
+  <p class="sub">İzleme listesi · {{ liste|length }} hisse</p>
+  <div class="grid cards">{% for e in liste %}{{ kart(e) }}{% endfor %}</div>
+</section>
 {% endfor %}
+<p class="neu" id="bos" hidden style="margin-top:28px">Aramana uyan hisse yok.</p>
 
 <div class="note" style="margin-top:28px"><b>Yeni hisse analiz etmek için:</b> GitHub'da deponu aç → <b>Actions</b> → <b>Hisse Raporu</b> → <b>Run workflow</b> → sembolü yaz (örn. <span class="mono">AMD</span>) → yeşil butona bas. 2–3 dakika sonra burada görünür.</div>
 <footer class="foot">Kaynak: Yahoo Finance. Tüm sayılar kodla hesaplanır. Kişisel kullanım içindir, yatırım tavsiyesi değildir.</footer>
-</div></body></html>
+</div>
+<script>
+(function(){
+  const ara=document.getElementById('ara'), sir=document.getElementById('sirala'), say=document.getElementById('sayac');
+  const chips=[...document.querySelectorAll('.tchip')]; let tema='';
+  const kartlar=[...document.querySelectorAll('.sc-card')];
+  function kaydet(){try{localStorage.setItem('hr_filtre',JSON.stringify({q:ara.value,t:tema,s:sir.value}))}catch(e){}}
+  function uygula(){
+    const q=ara.value.trim().toLowerCase(); let n=0;
+    kartlar.forEach(k=>{const ok=(!q||k.dataset.sym.toLowerCase().includes(q)||k.dataset.ad.includes(q))&&(!tema||k.dataset.tema===tema);
+      k.hidden=!ok; if(ok)n++;});
+    const alan=sir.value;
+    document.querySelectorAll('.grup .cards').forEach(g=>{
+      const ks=[...g.children];
+      ks.sort((a,b)=>alan==='sym'?a.dataset.sym.localeCompare(b.dataset.sym):(parseFloat(b.dataset[alan])-parseFloat(a.dataset[alan])));
+      ks.forEach(k=>g.appendChild(k));
+      g.closest('.grup').hidden=!ks.some(k=>!k.hidden);
+    });
+    say.textContent=n+' / '+kartlar.length+' hisse gösteriliyor';
+    document.getElementById('bos').hidden=n>0; kaydet();
+  }
+  chips.forEach(c=>c.addEventListener('click',()=>{chips.forEach(x=>x.classList.remove('on'));c.classList.add('on');tema=c.dataset.t;uygula();}));
+  ara.addEventListener('input',uygula); sir.addEventListener('change',uygula);
+  try{const f=JSON.parse(localStorage.getItem('hr_filtre')||'null'); if(f){ara.value=f.q||'';sir.value=f.s||'karne';tema=f.t||'';
+    chips.forEach(c=>c.classList.toggle('on',c.dataset.t===tema)); if(!chips.some(c=>c.classList.contains('on')))chips[0].classList.add('on'),tema='';}}catch(e){}
+  uygula();
+})();
+</script>
+</body></html>
