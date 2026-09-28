@@ -1,0 +1,52 @@
+# ============================================================
+#  YATIRIM TEZLERİN (MODEL V7.0)
+#  Her hisse için kendi tezini, izleyeceğin göstergeleri ve
+#  "tez bozulursa" kurallarını yaz. Rapor bu kuralları her gün kontrol eder.
+#
+#  kurallar -> metrik adları:
+#    ciro_buyume, eps_buyume, brut_marj, faaliyet_marj, net_marj, fcf_marj, roe,
+#    fk, fk_ileri, peg, trend_skoru, rsi, zirveden, adil_deger_fark, karne
+#  op: "<" (değer bunun altına düşerse UYARI) veya ">" (üstüne çıkarsa UYARI)
+#
+#  maliyet / adet: isteğe bağlı, pozisyon kâr/zararını göstermek için
+# ============================================================
+
+NVDA:
+  tema: "AI hesaplama"
+  tez: "BURAYA KENDİ TEZİNİ YAZ — örn. veri merkezi talebinin sürmesi, yazılım ekosistemi avantajı."
+  izlenecek:
+    - "Veri merkezi gelir büyümesi"
+    - "Brüt marj"
+  bozulma:
+    - "Brüt marjın iki çeyrek üst üste belirgin düşmesi"
+  kurallar:
+    - {ad: "Brüt marj %65 altı", metrik: brut_marj, op: "<", deger: 65}
+    - {ad: "Ciro büyümesi %20 altı", metrik: ciro_buyume, op: "<", deger: 20}
+    - {ad: "Trend skoru 40 altı", metrik: trend_skoru, op: "<", deger: 40}
+  # maliyet: 0
+  # adet: 0
+
+VRT:
+  tema: "Veri merkezi güç/soğutma"
+  tez: "BURAYA KENDİ TEZİNİ YAZ"
+  kurallar:
+    - {ad: "Ciro büyümesi %10 altı", metrik: ciro_buyume, op: "<", deger: 10}
+    - {ad: "Trend skoru 40 altı", metrik: trend_skoru, op: "<", deger: 40}
+
+ETN:
+  tema: "Elektrifikasyon"
+  tez: "BURAYA KENDİ TEZİNİ YAZ"
+  kurallar:
+    - {ad: "Faaliyet marjı %15 altı", metrik: faaliyet_marj, op: "<", deger: 15}
+
+GEV:
+  tema: "Enerji üretimi / şebeke"
+  tez: "BURAYA KENDİ TEZİNİ YAZ"
+  kurallar:
+    - {ad: "Trend skoru 40 altı", metrik: trend_skoru, op: "<", deger: 40}
+
+MU:
+  tema: "Bellek (HBM)"
+  tez: "BURAYA KENDİ TEZİNİ YAZ"
+  kurallar:
+    - {ad: "Brüt marj %35 altı", metrik: brut_marj, op: "<", deger: 35}

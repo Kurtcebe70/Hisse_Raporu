@@ -1,0 +1,28 @@
+# ============================================================
+#  HİSSE RAPORU — AYAR DOSYASI
+# ============================================================
+
+baslik: "Hisse Raporu"
+# Claude ile yorum yazdırmak için GitHub'da ANTHROPIC_API_KEY sırrı gerekir.
+# Anahtar yoksa rapor kural tabanlı şablon metinle yine üretilir.
+claude_model: "claude-sonnet-5"
+benchmark: SPY
+
+# İsteğe bağlı: makro raporunun adresi (sayfada "← Makro rapor" bağlantısı çıkar). Boş bırakabilirsin.
+makro_rapor_url: "https://kurtcebe70.github.io/Makro_Rapor/"
+
+# Her sabah otomatik analiz edilecek hisseler
+portfoy: [NVDA, VRT, ETN, GEV, MU]
+izleme_listesi: [AVGO, TSM]
+
+# Karne ağırlıkları (%)
+karne_agirliklari: {Büyüme: 20, Kârlılık: 20, Bilanço: 10, Değerleme: 20, Trend: 15, Beklenti: 15}
+
+# Adil değer varsayımları
+degerleme:
+  hedef_peg: 1.5          # F/K–büyüme yönteminde hedef F/K = PEG × beklenen büyüme
+  fk_min: 12
+  fk_max: 45
+  iskonto: 0.10           # DCF iskonto oranı
+  terminal_buyume: 0.03
+  dcf_max_buyume: 0.30    # DCF ilk yıl büyümesinin üst sınırı

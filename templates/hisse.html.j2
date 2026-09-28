@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ s.sembol }} · {{ cfg.baslik }}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+{% include "_stil.html.j2" %}
+<style>
+.hdr{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-end;border-bottom:1px solid var(--line);padding-bottom:18px}
+.px{font:600 30px/1 "JetBrains Mono",monospace;margin-top:8px}
+.three{grid-template-columns:repeat(3,1fr)}
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)}
+.mgrid>div{padding:12px 14px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-width:0}
+.mgrid .k{font:600 10.5px "JetBrains Mono",monospace;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}
+.mgrid .v{font:600 18px/1.4 "JetBrains Mono",monospace;margin-top:4px}
+.mgrid small{display:block;color:var(--muted);font-size:11.5px;line-height:1.4;margin-top:4px}
+.dist{display:flex;height:22px;border-radius:6px;overflow:hidden;font:600 11px "JetBrains Mono",monospace}
+.dist span{display:flex;align-items:center;justify-content:center;color:#fff;min-width:0;overflow:hidden}
+.rngbar{position:relative;height:8px;border-radius:99px;background:var(--panel2);margin:28px 6px 26px}
+.rngbar .fill{position:absolute;top:0;bottom:0;border-radius:99px;background:var(--acc-bg);border:1px solid var(--acc)}
+.rngbar .mk{position:absolute;top:-6px;width:3px;height:20px;border-radius:2px;transform:translateX(-1px)}
+.rngbar .mk b{position:absolute;top:-19px;left:50%;transform:translateX(-50%);font:600 10.5px "JetBrains Mono",monospace;white-space:nowrap}
+.rngbar .mk i{position:absolute;top:22px;left:50%;transform:translateX(-50%);font:500 10px Inter;font-style:normal;color:var(--muted);white-space:nowrap}
+.chk{display:flex;gap:8px;font-size:13.5px;padding:5px 0}.chk .d{flex:none;width:18px;text-align:center}
+.lv{display:flex;justify-content:space-between;gap:8px;padding:7px 10px;border-radius:8px;font-size:13.5px;margin:3px 0}
+.lv.direnc{background:var(--neg-bg)}.lv.destek{background:var(--pos-bg)}.lv.now{background:var(--acc-bg);font-weight:700}
+@media (max-width:860px){.three{grid-template-columns:1fr}.mgrid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+{% set m = s.metrikler %}{% set t = s.trend %}{% set fv = s.adil %}{% set an = s.analist %}
+<header class="hdr">
+  <div>
+    <div style="font-size:13px"><a href="index.html" style="color:var(--acc);text-decoration:none">← Tüm hisseler</a>{% if makro_url %} · <a href="{{ makro_url }}" style="color:var(--acc);text-decoration:none">Makro rapor</a>{% endif %}</div>
+    <h1 style="margin-top:10px">{{ s.sembol }} <span style="font-weight:500;color:var(--muted);font-size:17px">{{ s.ad }}</span></h1>
+    <div class="px">{{ s.fiyat|num(2) }} $ <span class="{{ s.gun|pct_tone }}" style="font-size:18px">{{ s.gun|spct(2) }}</span></div>
+    <div class="sub" style="margin:6px 0 0">{{ s.sektor or '' }}{% if s.endustri %} · {{ s.endustri }}{% endif %}{% if s.tez.var and s.tez.tema %} · Tema: {{ s.tez.tema }}{% endif %}</div>
+  </div>
+  <div class="meta" style="color:var(--muted);font-size:13px;text-align:right">
+    <div>Veri: {{ t.tarih|sdate }} kapanışı · üretim {{ s.alindi[11:16] }}</div>
+    <div>Yorum: {{ yorum.kaynak }}</div>
+    <button class="theme-btn" id="themeBtn" type="button">Tema</button>
+  </div>
+</header>
+
+{% if s.pozisyon.maliyet %}
+<div class="note" style="margin-top:16px"><b>Pozisyonun:</b> {% if s.pozisyon.adet %}{{ s.pozisyon.adet|num(0) }} adet · {% endif %}ort. maliyet {{ s.pozisyon.maliyet|num(2) }} $ ·
+  <span class="{{ s.pozisyon.kz|pct_tone }}">{{ s.pozisyon.kz|spct(1) }}</span> (açık K/Z)</div>
+{% endif %}
+
+<!-- ÖZET -->
+<section class="grid three" style="margin-top:18px">
+  <div class="card gauge">
+    <div class="sec-no">HİSSE KARNESİ</div>
+    <div class="n">{{ s.karne.skor if s.karne.skor is not none else '—' }}<small>/100</small></div>
+    <div class="meter"><i style="left:{{ s.karne.skor or 0 }}%"></i></div>
+    <div class="meter-l"><span>Zayıf</span><span>Orta</span><span>Güçlü</span></div>
+  </div>
+  <div class="card gauge">
+    <div class="sec-no">TREND SKORU</div>
+    <div class="n">{{ t.skor }}<small>/100</small></div>
+    <div style="font-weight:600;margin-top:4px">{{ t.asama }}</div>
+    <div class="meter"><i style="left:{{ t.skor }}%"></i></div>
+  </div>
+  <div class="card gauge">
+    <div class="sec-no">ADİL DEĞER (3 YÖNTEM)</div>
+    {% if fv.deger %}
+    <div class="n" style="font-size:36px">{{ fv.deger|num(2) }}<small> $</small></div>
+    <div style="margin-top:6px"><span class="mono {{ fv.fark|pct_tone }}">{{ fv.fark|spct(1) }}</span> <span class="neu">fiyata göre · güven {{ fv.guven }}/100</span></div>
+    {% else %}<div class="n neu">—</div>{% endif %}
+  </div>
+</section>
+<div class="card" style="margin-top:12px"><p class="summary" style="margin:0">{{ yorum.ozet }}</p></div>
+
+<!-- METRİKLER -->
+<section class="sec">
+  <div class="sec-no">SAYILAR</div>
+  <h2>Tek bakışta</h2>
+  <p class="sub">Temel oranlar · kaynak Yahoo Finance</p>
+  <div class="mgrid">
+    <div><div class="k">Piyasa değeri</div><div class="v">{{ m.piyasa_degeri|big }} $</div></div>
+    <div><div class="k">Ciro büyümesi</div><div class="v {{ m.ciro_buyume|pct_tone }}">{{ m.ciro_buyume|spct(1) }}</div><small>son çeyrek · yıllık</small></div>
+    <div><div class="k">EPS büyümesi</div><div class="v {{ m.eps_buyume|pct_tone }}">{{ m.eps_buyume|spct(1) }}</div><small>son çeyrek · yıllık</small></div>
+    <div><div class="k">F/K</div><div class="v">{{ m.fk|num(1) }}</div><small>son 12 ay</small></div>
+    <div><div class="k">İleri F/K</div><div class="v">{{ m.fk_ileri|num(1) }}</div><small>gelecek yıl kâr tahminine göre</small></div>
+    <div><div class="k">PEG</div><div class="v">{{ m.peg|num(2) }}</div><small>F/K ÷ beklenen büyüme{% if m.beklenen_buyume %} (%{{ m.beklenen_buyume|num(1) }}){% endif %}</small></div>
+    <div><div class="k">Brüt / faaliyet marjı</div><div class="v">%{{ m.brut_marj|num(1) }} / %{{ m.faaliyet_marj|num(1) }}</div></div>
+    <div><div class="k">Serbest nakit marjı</div><div class="v">%{{ m.fcf_marj|num(1) }}</div><small>12 aylık FCF ÷ ciro</small></div>
+    <div><div class="k">RSI</div><div class="v">{{ m.rsi|num(0) }}</div><small>14 günlük · 70+ aşırı alım, 30− aşırı satım</small></div>
+    <div><div class="k">52 hafta bandı</div><div class="v">%{{ t.pos52 }}</div><small>dip {{ t.lo52|num(2) }} · zirve {{ t.hi52|num(2) }}</small></div>
+    <div><div class="k">Net nakit</div><div class="v {{ 'pos' if m.net_nakit and m.net_nakit>0 else 'neg' }}">{{ m.net_nakit|big }} $</div><small>nakit − toplam borç</small></div>
+    <div><div class="k">Sonraki bilanço</div><div class="v">{{ s.bilanco.sonraki|sdate if s.bilanco.sonraki else '—' }}</div><small>{% if s.bilanco.is_gunu is not none %}{{ s.bilanco.is_gunu }} işlem günü sonra{% endif %}</small></div>
+  </div>
+</section>
+
+<!-- 01 KARNE -->
+<section class="sec">
+  <div class="sec-no">01</div>
+  <h2>Karne</h2>
+  <p class="sub">{% for k, w in s.karne.agirlik.items() %}{{ k }} %{{ w }}{% if not loop.last %} · {% endif %}{% endfor %} · ağırlıklar config.yaml'da</p>
+  <div class="chips">
+    {% for k, v in s.karne.ayaklar.items() %}
+    <div class="chip {{ '' if v is none else ('g' if v>=7 else ('r' if v<4.5 else 'y')) }}">{{ k }}: <b>{{ v|num(1) if v is not none else '—' }}/10</b>
+      <div class="bar"><b style="width:{{ (v or 0)*10 }}%;background:{{ 'var(--pos)' if (v or 0)>=7 else ('var(--neg)' if (v or 0)<4.5 else 'var(--warn)') }}"></b></div></div>
+    {% endfor %}
+  </div>
+  <div class="grid two" style="margin-top:12px">
+    <div class="card"><b class="pos">Güçlü yanlar</b><ul class="story">{% for x in yorum.guclu %}<li>{{ x }}</li>{% else %}<li class="neu">—</li>{% endfor %}</ul></div>
+    <div class="card"><b class="neg">Riskler / zayıf yanlar</b><ul class="story">{% for x in yorum.zayif %}<li>{{ x }}</li>{% else %}<li class="neu">—</li>{% endfor %}</ul></div>
+  </div>
+</section>
+
+<!-- 02 TEZ -->
+<section class="sec">
+  <div class="sec-no">02</div>
+  <h2>Yatırım tezin</h2>
+  <p class="sub">tezler.yaml · kurallar her gün otomatik kontrol edilir</p>
+  {% if s.tez.var %}
+  <div class="grid two">
+    <div class="card">
+      <p style="margin:0 0 10px">{{ s.tez.tez }}</p>
+      {% if s.tez.izlenecek %}<b>İzlenecekler</b><ul class="story">{% for x in s.tez.izlenecek %}<li>{{ x }}</li>{% endfor %}</ul>{% endif %}
+      {% if s.tez.bozulma %}<b>Tez bozulursa</b><ul class="story">{% for x in s.tez.bozulma %}<li>{{ x }}</li>{% endfor %}</ul>{% endif %}
+      {% if yorum.tez %}<div class="note">{{ yorum.tez }}</div>{% endif %}
+    </div>
+    <div class="card">
+      <b>Tez kuralları</b> <span class="badge {{ 'b-ok' if s.tez.saglam else 'b-risk' }}">{{ 'sağlam' if s.tez.saglam else 'uyarı var' }}</span>
+      {% for r in s.tez.kural_sonuc %}
+      <div class="kv"><span>{{ r.ad }}</span><span class="mono">{{ r.mevcut|num(1) if r.mevcut is not none else '—' }}
+        <span class="badge {{ {'UYARI':'b-risk','sağlam':'b-ok'}.get(r.durum,'b-muted') }}">{{ r.durum }}</span></span></div>
+      {% else %}<p class="neu">Kural tanımlanmamış.</p>{% endfor %}
+    </div>
+  </div>
+  {% else %}
+  <div class="card"><p class="neu" style="margin:0">Bu hisse için tezler.yaml'da kayıt yok. Tezini ve "tez bozulursa" kurallarını ekleyebilirsin.</p></div>
+  {% endif %}
+</section>
+
+<!-- 03 TREND -->
+<section class="sec">
+  <div class="sec-no">03</div>
+  <h2>Trend ve çıkış planı</h2>
+  <p class="sub">Son 120 seans · 20/50/200 günlük ortalamalar · seviyeler salınım tepe/diplerinden</p>
+  <div class="card">
+    <div class="legend"><span><i style="background:var(--ink)"></i>Fiyat</span><span><i style="background:var(--c1)"></i>20G {{ t.ma[20]|num(2) }}</span>
+      <span><i style="background:var(--c3)"></i>50G {{ t.ma[50]|num(2) }}</span><span><i style="background:var(--c4)"></i>200G {{ t.ma[200]|num(2) if t.ma[200] else '—' }}</span></div>
+    {{ line_chart(t.seriler, 900, 260)|safe }}
+    <div class="meter-l"><span>{{ t.ilk_tarih }}</span><span>{{ t.son_tarih }}</span></div>
+    {% for u in t.uyarilar %}<div class="note" style="background:var(--warn-bg)">⚠ {{ u }}</div>{% endfor %}
+  </div>
+  <div class="grid three" style="margin-top:12px">
+    <div class="card"><b>Trend skoru {{ t.skor }}/100</b>
+      {% for d in t.detay %}<div class="chk"><span class="d {{ 'pos' if d.ok else 'neg' }}">{{ '✓' if d.ok else '✗' }}</span><span>{{ d.metin }} <span class="neu">({{ d.puan }})</span></span></div>{% endfor %}
+    </div>
+    <div class="card"><b>Fiyat haritası</b>
+      {% set ns = namespace(done=false) %}
+      {% for v in t.seviyeler %}
+        {% if not ns.done and v.fiyat < s.fiyat %}<div class="lv now"><span>Şu an</span><span class="mono">{{ s.fiyat|num(2) }}</span></div>{% set ns.done = true %}{% endif %}
+        <div class="lv {{ v.tur }}"><span>{{ v.ad }}</span><span class="mono">{{ v.fiyat|num(2) }} <span class="neu">{{ v.mesafe|spct(1) }}</span></span></div>
+      {% endfor %}
+      {% if not ns.done %}<div class="lv now"><span>Şu an</span><span class="mono">{{ s.fiyat|num(2) }}</span></div>{% endif %}
+    </div>
+    <div class="card"><b>Çıkış çizgileri</b>
+      {% for c in t.cikis %}{% if c.fiyat %}
+      <div style="padding:8px 0;border-bottom:1px dashed var(--line)">
+        <div class="kv" style="border:0;padding:0"><span><b>{{ c.ad }}</b></span><span class="mono">{{ c.fiyat|num(2) }} <span class="neu">{{ c.mesafe|spct(1) }}</span></span></div>
+        <div style="font-size:12.5px;color:var(--muted)">{{ c.aciklama }}</div></div>
+      {% endif %}{% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- 04 ADİL DEĞER -->
+<section class="sec">
+  <div class="sec-no">04</div>
+  <h2>Adil değer</h2>
+  <p class="sub">Üç yöntemin ortalaması · güven = yöntemlerin birbirine yakınlığı · varsayımlar config.yaml → degerleme</p>
+  <div class="card"><div class="scroll"><table class="tbl">
+    <thead><tr><th>Yöntem</th><th>Değer</th><th>Fiyata göre</th><th>Nasıl hesaplandı</th></tr></thead>
+    <tbody>{% for x in fv.yontemler %}
+      <tr><td class="l"><b>{{ x.ad }}</b></td><td class="mono">{{ x.deger|num(2) }} $</td><td class="mono {{ x.fark|pct_tone }}">{{ x.fark|spct(1) }}</td>
+        <td class="l" style="font-size:12.5px;color:var(--muted);max-width:460px">{{ x.aciklama }}</td></tr>
+    {% else %}<tr><td colspan="4" class="neu l">Adil değer hesaplanamadı (kâr veya nakit akışı negatif olabilir).</td></tr>{% endfor %}
+    {% if fv.deger %}<tr><td class="l"><b>Harman</b></td><td class="mono"><b>{{ fv.deger|num(2) }} $</b></td><td class="mono {{ fv.fark|pct_tone }}"><b>{{ fv.fark|spct(1) }}</b></td><td class="l neu">güven {{ fv.guven }}/100</td></tr>{% endif %}
+    </tbody></table></div>
+    <p class="src">Adil değer bir tahmindir; varsayımlardaki küçük değişiklikler sonucu büyük ölçüde değiştirir.</p>
+  </div>
+</section>
+
+<!-- 05 KAZANÇ -->
+<section class="sec">
+  <div class="sec-no">05</div>
+  <h2>Para kazanıyor mu?</h2>
+  <p class="sub">Çeyreklik gelir tablosu ve serbest nakit akışı{% if s.finans.ciro_cagr %} · yıllık ciro büyümesi (CAGR) %{{ s.finans.ciro_cagr|num(1) }}{% endif %}</p>
+  <div class="card">
+    {% set q = s.finans.ceyrekler %}
+    {{ rev_bars(q|map(attribute='ciro')|list, q|map(attribute='donem')|list)|safe }}
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th>Çeyrek</th><th>Ciro</th><th>Yıllık</th><th>Brüt marj</th><th>Faaliyet marjı</th><th>Net kâr</th><th>EPS</th><th>Serbest nakit</th></tr></thead>
+      <tbody>{% for r in q|reverse %}
+      <tr><td class="l mono">{{ r.donem }}</td><td class="mono">{{ r.ciro|big }}</td><td class="mono {{ r.ciro_yoy|pct_tone }}">{{ r.ciro_yoy|spct(1) }}</td>
+        <td class="mono">%{{ r.brut_marj|num(1) }}</td><td class="mono">%{{ r.faaliyet_marj|num(1) }}</td><td class="mono">{{ r.net_kar|big }}</td>
+        <td class="mono">{{ r.eps|num(2) }}</td><td class="mono">{{ r.fcf|big }}</td></tr>
+      {% endfor %}</tbody></table></div>
+  </div>
+</section>
+
+<!-- 06 BİLANÇO -->
+<section class="sec">
+  <div class="sec-no">06</div>
+  <h2>Bilanço takvimi ve geçmiş</h2>
+  <p class="sub">Beklenti tutturma · açıklama sonrası ilk gün fiyat tepkisi</p>
+  <div class="grid two">
+    <div class="card">
+      <div class="kv"><span>Sonraki bilanço</span><span class="mono">{{ s.bilanco.sonraki or '—' }}{% if s.bilanco.is_gunu is not none %} · {{ s.bilanco.is_gunu }} iş günü{% endif %}</span></div>
+      <div class="kv"><span>Opsiyonların fiyatladığı hareket</span><span class="mono">{% if s.opsiyon.beklenen_hareket %}±%{{ s.opsiyon.beklenen_hareket|num(1) }} <span class="neu">({{ s.opsiyon.beklenen_vade }} vadesi)</span>{% else %}—{% endif %}</span></div>
+      <div class="kv"><span>Beklentiyi aşma (son çeyrekler)</span><span class="mono">{{ s.bilanco.tutturma or '—' }}</span></div>
+      <div class="kv"><span>Ortalama bilanço tepkisi</span><span class="mono">{% if s.bilanco.ort_tepki %}±%{{ s.bilanco.ort_tepki|num(1) }}{% else %}—{% endif %}</span></div>
+      <p class="src">Beklenen hareket = bilanço sonrası ilk vadenin başa baş (ATM) straddle fiyatı ÷ hisse fiyatı.</p>
+    </div>
+    <div class="card"><div class="scroll"><table class="tbl">
+      <thead><tr><th>Tarih</th><th>EPS beklenti</th><th>Gerçek</th><th>Sürpriz</th><th>Ertesi gün</th></tr></thead>
+      <tbody>{% for r in s.bilanco.gecmis %}
+        <tr><td class="l mono">{{ r.tarih }}</td><td class="mono">{{ r.beklenti|num(2) }}</td><td class="mono">{{ r.gercek|num(2) }}</td>
+          <td class="mono {{ r.surpriz|pct_tone }}">{{ r.surpriz|spct(1) }}</td><td class="mono {{ r.tepki|pct_tone }}">{{ r.tepki|spct(1) }}</td></tr>
+      {% else %}<tr><td colspan="5" class="neu l">Geçmiş veri yok</td></tr>{% endfor %}</tbody></table></div></div>
+  </div>
+</section>
+
+<!-- 07 UZMANLAR -->
+<section class="sec">
+  <div class="sec-no">07</div>
+  <h2>Uzmanlar ne bekliyor?</h2>
+  <p class="sub">Analist tavsiye dağılımı · 12 aylık hedef fiyat aralığı · son 90 günde not değişiklikleri</p>
+  <div class="grid two">
+    <div class="card">
+      {% if an.dagilim %}{% set d = an.dagilim %}{% set tt = an.toplam or 1 %}
+      <b>{{ an.toplam }} analist · %{{ an.al_orani }} "Al"</b>
+      <div class="dist" style="margin-top:10px">
+        {% for k, lbl, col in (('strongBuy','Güçlü Al','#0f8a5f'),('buy','Al','#34c38f'),('hold','Tut','#b7791f'),('sell','Sat','#f0645a'),('strongSell','Güçlü Sat','#c9372c')) %}
+          {% if d[k] %}<span style="width:{{ d[k]/tt*100 }}%;background:{{ col }}" title="{{ lbl }} {{ d[k] }}">{{ d[k] }}</span>{% endif %}{% endfor %}
+      </div>
+      <div class="meter-l" style="margin-top:6px"><span>Güçlü Al · Al</span><span>Tut</span><span>Sat · Güçlü Sat</span></div>
+      {% endif %}
+      {% set h = an.hedef %}
+      {% if h.low and h.high %}
+      {% set lo = [h.low, s.fiyat]|min * 0.97 %}{% set hi = [h.high, s.fiyat]|max * 1.03 %}{% set sp = hi - lo %}
+      <div class="rngbar">
+        <div class="fill" style="left:{{ (h.low-lo)/sp*100 }}%;right:{{ (hi-h.high)/sp*100 }}%"></div>
+        <div class="mk" style="left:{{ (s.fiyat-lo)/sp*100 }}%;background:var(--ink)"><b>{{ s.fiyat|num(0) }}</b><i>fiyat</i></div>
+        {% if h.mean %}<div class="mk" style="left:{{ (h.mean-lo)/sp*100 }}%;background:var(--acc)"><b style="color:var(--acc)">{{ h.mean|num(0) }}</b><i>ortalama</i></div>{% endif %}
+      </div>
+      <div class="kv"><span>En düşük / en yüksek hedef</span><span class="mono">{{ h.low|num(2) }} ({{ an.hedef_fark.low|spct(1) }}) · {{ h.high|num(2) }} ({{ an.hedef_fark.high|spct(1) }})</span></div>
+      <div class="kv"><span>Ortalama hedef</span><span class="mono">{{ h.mean|num(2) }} ({{ an.hedef_fark.mean|spct(1) }})</span></div>
+      {% endif %}
+    </div>
+    <div class="card"><b>Son 90 gün: {{ an.yukseltme }} yükseltme · {{ an.dusurme }} düşürme</b>
+      {% for r in an.son %}<div class="kv"><span>{{ r.tarih|sdate }} · {{ r.kurum }}</span><span class="mono">{{ r.eski or '—' }} → <b>{{ r.yeni }}</b>
+        <span class="badge {{ {'up':'b-ok','down':'b-risk'}.get(r.aksiyon,'b-muted') }}">{{ {'up':'yükseltme','down':'düşürme','main':'koruma','init':'başlatma','reit':'teyit'}.get(r.aksiyon, r.aksiyon) }}</span></span></div>
+      {% else %}<p class="neu">Kayıt yok</p>{% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- 08 YÖNETİCİLER -->
+<section class="sec">
+  <div class="sec-no">08</div>
+  <h2>Yöneticiler ne yapıyor?</h2>
+  <p class="sub">İçeriden (insider) işlemler · son 90 gün · planlı (10b5-1) satışlar genelde önceden takvimlenmiştir</p>
+  <div class="card">
+    {% if s.insider.var %}
+    <div class="kv"><span>Alım</span><span class="mono pos">{{ s.insider.alim_sayi }} işlem · {{ s.insider.alim_deger|big }} $</span></div>
+    <div class="kv"><span>Satış</span><span class="mono neg">{{ s.insider.satis_sayi }} işlem · {{ s.insider.satis_deger|big }} $</span></div>
+    <div class="scroll" style="margin-top:8px"><table class="tbl"><thead><tr><th>Tarih</th><th>Kişi</th><th>Görev</th><th>İşlem</th><th>Değer</th></tr></thead>
+      <tbody>{% for r in s.insider.islemler %}<tr><td class="l mono">{{ r.tarih }}</td><td class="l">{{ r.kisi }}</td><td class="l neu">{{ r.pozisyon }}</td>
+        <td class="{{ 'pos' if r.islem=='Alım' else ('neg' if r.islem=='Satış' else 'neu') }}">{{ r.islem }}</td><td class="mono">{{ r.deger|big }}</td></tr>{% endfor %}</tbody></table></div>
+    {% else %}<p class="neu" style="margin:0">İçeriden işlem verisi yok.</p>{% endif %}
+  </div>
+</section>
+
+<!-- 09 BÜYÜK PARA -->
+<section class="sec">
+  <div class="sec-no">09</div>
+  <h2>Büyük para nerede bekliyor?</h2>
+  <p class="sub">Opsiyon açık pozisyon haritası · en yakın {{ s.opsiyon.vadeler|length if s.opsiyon.var else 0 }} vade toplamı · fiyatın ±%20'si</p>
+  {% if s.opsiyon.var %}{% set o = s.opsiyon %}
+  <div class="grid two">
+    <div class="card">
+      <div class="kv"><span>Put duvarı (altta en büyük put yığılması)</span><span class="mono neg">{{ o.put_duvar|num(0) }} $</span></div>
+      <div class="kv"><span>Call tavanı (üstte en büyük call yığılması)</span><span class="mono pos">{{ o.call_duvar|num(0) }} $</span></div>
+      <div class="kv"><span>Put / Call açık pozisyon oranı</span><span class="mono">{{ o.pcr|num(2) }}</span></div>
+      <div class="kv"><span>Max pain ({{ o.max_pain_vade }})</span><span class="mono">{{ o.max_pain|num(0) }} $</span></div>
+      <p class="src">Put duvarı çoğu zaman destek, call tavanı direnç gibi davranır; vade geçince etkisi kaybolur. Max pain: vadede opsiyon alıcılarının en çok kaybettiği fiyat.</p>
+    </div>
+    <div class="card"><div class="legend"><span><i style="background:var(--neg)"></i>Put</span><span><i style="background:var(--pos)"></i>Call</span><span>Kalın = güncel fiyata en yakın</span></div>
+      {{ oi(o.bars, s.fiyat)|safe }}</div>
+  </div>
+  {% else %}<div class="card"><p class="neu" style="margin:0">Opsiyon verisi yok.</p></div>{% endif %}
+</section>
+
+<!-- 10 İZLE -->
+<section class="sec">
+  <div class="sec-no">10</div>
+  <h2>Bundan sonra izlenecekler</h2>
+  <div class="card"><ul class="story">{% for x in yorum.izle %}<li>{{ x }}</li>{% endfor %}</ul></div>
+  {% if s.ozet_is %}<details class="card" style="margin-top:12px"><summary style="cursor:pointer;font-weight:600">Şirket ne yapar?</summary><p style="color:var(--muted);font-size:13.5px">{{ s.ozet_is }}…</p></details>{% endif %}
+</section>
+
+<footer class="foot">Kaynak: Yahoo Finance (yfinance). Tüm sayılar kodla hesaplanır; yorum yalnızca bu sayılardan üretilir. Kişisel kullanım içindir, yatırım tavsiyesi değildir.</footer>
+</div>
+<script>
+(function(){const r=document.documentElement,btn=document.getElementById('themeBtn');
+  let t=null;try{t=localStorage.getItem('theme')}catch(e){}
+  if(t)r.dataset.theme=t;
+  btn.addEventListener('click',()=>{const dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;
+    r.dataset.theme=dark?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(e){}});})();
+</script>
+</body>
+</html>

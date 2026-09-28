@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ cfg.baslik }}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+{% include "_stil.html.j2" %}
+<style>
+.cards{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.sc-card{display:block;color:inherit;text-decoration:none;transition:border-color .15s}
+.sc-card:hover{border-color:var(--acc)}
+.sc-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.sc-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0 8px}
+.sc-nums div{background:var(--panel2);border-radius:8px;padding:8px}
+.sc-nums small{display:block;font-size:10.5px;color:var(--faint);font-family:"JetBrains Mono",monospace;letter-spacing:.06em}
+.sc-nums b{font:600 17px "JetBrains Mono",monospace}
+.sc-card p{font-size:13px;color:var(--muted);margin:6px 0 0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+</style>
+</head><body><div class="wrap">
+<header class="top">
+  <div>
+    <span class="badge b-acc">Hisse Raporu</span>
+    <h1 style="margin-top:10px">{{ cfg.baslik }}</h1>
+    <div class="sub" style="margin:4px 0 0">Karne · trend · adil değer · tez kontrolü — her hisse için ayrıntılı sayfa</div>
+  </div>
+  <div class="meta">
+    <div>Son güncelleme {{ simdi }} TSİ</div>
+    {% if makro_url %}<div><a href="{{ makro_url }}" style="color:var(--acc)">Makro rapor →</a></div>{% endif %}
+  </div>
+</header>
+
+{% for grup, baslik in ((true, 'Portföy'), (false, 'İzleme listesi ve diğerleri')) %}
+{% set liste = entries|selectattr('portfoyde', 'equalto', grup)|list %}
+{% if liste %}
+<section class="sec">
+  <h2>{{ baslik }}</h2>
+  <p class="sub">{{ liste|length }} hisse · karta tıkla</p>
+  <div class="grid cards">
+  {% for e in liste %}
+    <a class="card sc-card" href="{{ e.sembol }}.html">
+      <div class="sc-top"><div><b style="font-size:18px">{{ e.sembol }}</b> <span class="neu" style="font-size:12.5px">{{ e.ad }}</span></div>
+        <span class="mono">{{ e.fiyat|num(2) }} <span class="{{ e.gun|pct_tone }}">{{ e.gun|spct(1) }}</span></span></div>
+      <div class="sc-nums">
+        <div><small>KARNE</small><b class="{{ 'pos' if (e.karne or 0)>=70 else ('neg' if (e.karne or 0)<45 else '') }}">{{ e.karne if e.karne is not none else '—' }}</b></div>
+        <div><small>TREND</small><b class="{{ 'pos' if e.trend>=70 else ('neg' if e.trend<40 else '') }}">{{ e.trend }}</b></div>
+        <div><small>ADİL DEĞER</small><b class="{{ e.adil_fark|pct_tone }}">{{ e.adil_fark|spct(0) }}</b></div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span class="badge b-muted">{{ e.asama }}</span>
+        {% if e.tez is not none %}<span class="badge {{ 'b-ok' if e.tez else 'b-risk' }}">tez {{ 'sağlam' if e.tez else 'uyarı' }}</span>{% endif %}
+        {% if e.bilanco %}<span class="badge b-acc">bilanço {{ e.bilanco|sdate }}</span>{% endif %}
+        <span class="badge b-muted">veri {{ e.tarih|sdate }}</span>
+      </div>
+      {% if e.ozet %}<p>{{ e.ozet }}</p>{% endif %}
+    </a>
+  {% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endfor %}
+
+<div class="note" style="margin-top:28px"><b>Yeni hisse analiz etmek için:</b> GitHub'da deponu aç → <b>Actions</b> → <b>Hisse Raporu</b> → <b>Run workflow</b> → sembolü yaz (örn. <span class="mono">AMD</span>) → yeşil butona bas. 2–3 dakika sonra burada görünür.</div>
+<footer class="foot">Kaynak: Yahoo Finance. Tüm sayılar kodla hesaplanır. Kişisel kullanım içindir, yatırım tavsiyesi değildir.</footer>
+</div></body></html>
