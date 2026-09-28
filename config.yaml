@@ -26,3 +26,4 @@ degerleme:
   iskonto: 0.10           # DCF iskonto oranı
   terminal_buyume: 0.03
   dcf_max_buyume: 0.30    # DCF ilk yıl büyümesinin üst sınırı
+  uc_deger_sinir: 100     # Fiyattan bu kadar %'den fazla sapan yöntem "uç değer" sayılır, harmana girmez
