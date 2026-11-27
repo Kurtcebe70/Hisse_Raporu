@@ -35,7 +35,7 @@
   "tez_uyarilari": [
    "Trend skoru 40 altı"
   ],
-  "bilanco_gun": 54,
+  "bilanco_gun": 53,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -53,7 +53,7 @@
   "ozet": "AVGO karne puanı 83/100, trend skoru 0/100 (Düşüş). Adil değer harmanı 433,47 $ — fiyata göre +%44,1 (güven 53/100). Analistlerin %94'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 9,
+  "bilanco_gun": 8,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -71,7 +71,7 @@
   "ozet": "TSM karne puanı 88/100, trend skoru 25/100 (Düşüş). Adil değer harmanı 560,00 $ — fiyata göre +%63,6 (güven 70/100). Analistlerin %95'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 35,
+  "bilanco_gun": 34,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -91,7 +91,7 @@
   "tez_uyarilari": [
    "Zirveden %35'ten fazla düşüş"
   ],
-  "bilanco_gun": 53,
+  "bilanco_gun": 52,
   "trend_uyarilari": [
    "İşlem geçmişi kısa (116 gün) — 200 günlük ortalama ve bazı trend ölçüleri hesaplanamıyor"
   ],
@@ -111,13 +111,13 @@
   "ozet": "QCOM karne puanı 56/100, trend skoru 50/100 (Düşüş). Adil değer harmanı 234,19 $ — fiyata göre +%38,9 (güven 47/100). Analistlerin %27'i 'Al' diyor.",
   "tez": true,
   "tez_uyarilari": [],
-  "bilanco_gun": 49,
+  "bilanco_gun": 48,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
  "ANTW": {
   "sembol": "ANTW",
-  "ad": "Harbor ETF Trust - Anthropic AI Lab Ecosystem ETF",
+  "ad": "Anthropic AI Lab Ecosystem ETF",
   "fiyat": 18.469999313354492,
   "gun": 0.16,
   "karne": null,
@@ -171,7 +171,7 @@
   "ozet": "ISRG karne puanı 64/100, trend skoru 45/100 (Yükseliş (düzeltmede)). Adil değer harmanı 307,75 $ — fiyata göre −%28,0 (güven 33/100). Analistlerin %77'i 'Al' diyor.",
   "tez": true,
   "tez_uyarilari": [],
-  "bilanco_gun": 40,
+  "bilanco_gun": 39,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -183,13 +183,13 @@
   "karne": 74,
   "trend": 10,
   "asama": "Düşüş",
-  "adil_fark": 63.74,
+  "adil_fark": 64.8,
   "tarih": "2026-11-25",
   "bilanco": "2027-01-27",
-  "ozet": "GEV karne puanı 74/100, trend skoru 10/100 (Düşüş). Adil değer harmanı 1.170,74 $ — fiyata göre +%63,7 (güven 84/100). Analistlerin %86'i 'Al' diyor.",
+  "ozet": "GEV karne puanı 74/100, trend skoru 10/100 (Düşüş). Adil değer harmanı 1.178,34 $ — fiyata göre +%64,8 (güven 84/100). Analistlerin %86'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 44,
+  "bilanco_gun": 43,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -207,7 +207,7 @@
   "ozet": "PWR karne puanı 67/100, trend skoru 10/100 (Düşüş). Adil değer harmanı 673,09 $ — fiyata göre +%19,0 (güven 78/100). Analistlerin %81'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 60,
+  "bilanco_gun": 59,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -225,7 +225,7 @@
   "ozet": "PLTR karne puanı 82/100, trend skoru 40/100 (Yükseliş (düzeltmede)). Adil değer harmanı 142,70 $ — fiyata göre −%12,8 (güven 29/100). Analistlerin %71'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 47,
+  "bilanco_gun": 46,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -243,7 +243,7 @@
   "ozet": "NOW karne puanı 69/100, trend skoru 15/100 (Düşüş). Adil değer harmanı 148,82 $ — fiyata göre +%61,5 (güven 91/100). Analistlerin %90'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 44,
+  "bilanco_gun": 43,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -261,7 +261,7 @@
   "ozet": "FTNT karne puanı 70/100, trend skoru 50/100 (Yükseliş (düzeltmede)). Adil değer harmanı 96,83 $ — fiyata göre −%28,2 (güven 46/100). Analistlerin %19'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 50,
+  "bilanco_gun": 49,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -279,7 +279,7 @@
   "ozet": "KLAC karne puanı 80/100, trend skoru 0/100 (Düşüş). Adil değer harmanı 187,55 $ — fiyata göre +%39,8 (güven 49/100). Analistlerin %72'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 45,
+  "bilanco_gun": 44,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -297,7 +297,7 @@
   "ozet": "ANET karne puanı 87/100, trend skoru 25/100 (Düşüş). Adil değer harmanı 232,04 $ — fiyata göre +%41,5 (güven 74/100). Analistlerin %100'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 53,
+  "bilanco_gun": 52,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -315,7 +315,7 @@
   "ozet": "CRDO karne puanı 79/100, trend skoru 0/100 (Düşüş). Adil değer harmanı 102,69 $ — fiyata göre −%3,8 (güven 70/100). Analistlerin %95'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 3,
+  "bilanco_gun": 2,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -327,13 +327,13 @@
   "karne": 81,
   "trend": 25,
   "asama": "Düşüş",
-  "adil_fark": 33.58,
+  "adil_fark": 33.66,
   "tarih": "2026-11-25",
   "bilanco": "2027-02-02",
-  "ozet": "AMD karne puanı 81/100, trend skoru 25/100 (Düşüş). Adil değer harmanı 542,37 $ — fiyata göre +%33,6 (güven 28/100). Analistlerin %89'i 'Al' diyor.",
+  "ozet": "AMD karne puanı 81/100, trend skoru 25/100 (Düşüş). Adil değer harmanı 542,71 $ — fiyata göre +%33,7 (güven 28/100). Analistlerin %89'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 48,
+  "bilanco_gun": 47,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -351,7 +351,7 @@
   "ozet": "MU karne puanı 88/100, trend skoru 25/100 (Düşüş). Analistlerin %90'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 15,
+  "bilanco_gun": 14,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -381,10 +381,10 @@
   "karne": 64,
   "trend": 0,
   "asama": "Düşüş",
-  "adil_fark": 7.7,
+  "adil_fark": 7.67,
   "tarih": "2026-11-25",
   "bilanco": "2026-11-09",
-  "ozet": "CEG karne puanı 64/100, trend skoru 0/100 (Düşüş). Adil değer harmanı 253,41 $ — fiyata göre +%7,7 (güven 30/100). Analistlerin %80'i 'Al' diyor.",
+  "ozet": "CEG karne puanı 64/100, trend skoru 0/100 (Düşüş). Adil değer harmanı 253,33 $ — fiyata göre +%7,7 (güven 30/100). Analistlerin %80'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
   "bilanco_gun": null,
@@ -399,13 +399,13 @@
   "karne": 80,
   "trend": 0,
   "asama": "Düşüş",
-  "adil_fark": 43.29,
+  "adil_fark": 45.9,
   "tarih": "2026-11-25",
   "bilanco": "2027-01-27",
-  "ozet": "TER karne puanı 80/100, trend skoru 0/100 (Düşüş). Adil değer harmanı 303,98 $ — fiyata göre +%43,3 (güven 32/100). Analistlerin %78'i 'Al' diyor.",
+  "ozet": "TER karne puanı 80/100, trend skoru 0/100 (Düşüş). Adil değer harmanı 309,52 $ — fiyata göre +%45,9 (güven 36/100). Analistlerin %78'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 44,
+  "bilanco_gun": 43,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -417,10 +417,10 @@
   "karne": 63,
   "trend": 40,
   "asama": "Yükseliş (düzeltmede)",
-  "adil_fark": -38.25,
+  "adil_fark": -38.19,
   "tarih": "2026-11-25",
   "bilanco": "2026-11-23",
-  "ozet": "CRWD karne puanı 63/100, trend skoru 40/100 (Yükseliş (düzeltmede)). Adil değer harmanı 129,24 $ — fiyata göre −%38,2 (güven 0/100). Analistlerin %78'i 'Al' diyor.",
+  "ozet": "CRWD karne puanı 63/100, trend skoru 40/100 (Yükseliş (düzeltmede)). Adil değer harmanı 129,38 $ — fiyata göre −%38,2 (güven 0/100). Analistlerin %78'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
   "bilanco_gun": null,
@@ -441,7 +441,7 @@
   "ozet": "PANW karne puanı 73/100, trend skoru 60/100 (Yükseliş (düzeltmede)). Adil değer harmanı 220,05 $ — fiyata göre −%38,2 (güven 1/100). Analistlerin %80'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 58,
+  "bilanco_gun": 57,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -459,7 +459,7 @@
   "ozet": "MRVL karne puanı 71/100, trend skoru 25/100 (Düşüş). Adil değer harmanı 81,51 $ — fiyata göre −%37,8 (güven 70/100). Analistlerin %88'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 3,
+  "bilanco_gun": 2,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -468,16 +468,16 @@
   "ad": "Eaton Corporation plc",
   "fiyat": 317.80999755859375,
   "gun": -0.46,
-  "karne": 61,
+  "karne": 60,
   "trend": 10,
   "asama": "Düşüş",
-  "adil_fark": 27.24,
+  "adil_fark": 24.94,
   "tarih": "2026-11-25",
   "bilanco": "2027-02-02",
-  "ozet": "ETN karne puanı 61/100, trend skoru 10/100 (Düşüş). Adil değer harmanı 404,39 $ — fiyata göre +%27,2 (güven 59/100). Analistlerin %79'i 'Al' diyor.",
+  "ozet": "ETN karne puanı 60/100, trend skoru 10/100 (Düşüş). Adil değer harmanı 397,07 $ — fiyata göre +%24,9 (güven 54/100). Analistlerin %79'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 48,
+  "bilanco_gun": 47,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -495,7 +495,7 @@
   "ozet": "SYM karne puanı 61/100, trend skoru 20/100 (Düşüş). Adil değer harmanı 44,80 $ — fiyata göre +%17,8 (güven 45/100). Analistlerin %50'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 47,
+  "bilanco_gun": 46,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -513,7 +513,7 @@
   "ozet": "NET karne puanı 60/100, trend skoru 40/100 (Yükseliş (düzeltmede)). Adil değer harmanı 159,02 $ — fiyata göre −%43,9 (güven 0/100). Analistlerin %71'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 53,
+  "bilanco_gun": 52,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -525,13 +525,13 @@
   "karne": 74,
   "trend": 25,
   "asama": "Düşüş",
-  "adil_fark": 28.98,
+  "adil_fark": 29.27,
   "tarih": "2026-11-25",
   "bilanco": "2027-02-04",
-  "ozet": "BE karne puanı 74/100, trend skoru 25/100 (Düşüş). Adil değer harmanı 197,19 $ — fiyata göre +%29,0 (güven 25/100). Analistlerin %59'i 'Al' diyor.",
+  "ozet": "BE karne puanı 74/100, trend skoru 25/100 (Düşüş). Adil değer harmanı 197,65 $ — fiyata göre +%29,3 (güven 25/100). Analistlerin %59'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 50,
+  "bilanco_gun": 49,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -569,7 +569,7 @@
   "ozet": "PL karne puanı 52/100, trend skoru 0/100 (Düşüş). Adil değer harmanı 3,41 $ — fiyata göre −%67,8 (güven 70/100). Analistlerin %62'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 10,
+  "bilanco_gun": 9,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -587,7 +587,7 @@
   "ozet": "KTOS karne puanı 59/100, trend skoru 0/100 (Düşüş). Adil değer harmanı 50,21 $ — fiyata göre +%73,5 (güven 70/100). Analistlerin %96'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 63,
+  "bilanco_gun": 62,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -605,7 +605,7 @@
   "ozet": "AVAV karne puanı 53/100, trend skoru 0/100 (Düşüş). Analistlerin %80'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 8,
+  "bilanco_gun": 7,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -623,7 +623,7 @@
   "ozet": "TEM karne puanı 66/100, trend skoru 25/100 (Düşüş). Adil değer harmanı 89,50 $ — fiyata göre +%63,5 (güven 70/100). Analistlerin %52'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 63,
+  "bilanco_gun": 62,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -641,7 +641,7 @@
   "ozet": "LMT karne puanı 61/100, trend skoru 65/100 (Yükseliş (düzeltmede)). Adil değer harmanı 567,69 $ — fiyata göre −%5,3 (güven 74/100). Analistlerin %54'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 43,
+  "bilanco_gun": 42,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -695,7 +695,7 @@
   "ozet": "NBIS karne puanı 64/100, trend skoru 10/100 (Düşüş). Analistlerin %73'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 55,
+  "bilanco_gun": 54,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -713,7 +713,7 @@
   "ozet": "TSLA karne puanı 33/100, trend skoru 40/100 (Toparlanma denemesi). Adil değer harmanı 186,77 $ — fiyata göre −%50,9 (güven 0/100). Analistlerin %49'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 44,
+  "bilanco_gun": 43,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -785,7 +785,7 @@
   "ozet": "AKAM karne puanı 46/100, trend skoru 10/100 (Düşüş). Adil değer harmanı 101,45 $ — fiyata göre +%14,4 (güven 57/100). Analistlerin %58'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 60,
+  "bilanco_gun": 59,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -843,7 +843,7 @@
   "ozet": "LPTH karne puanı 52/100, trend skoru 0/100 (Düşüş). Adil değer harmanı 2,64 $ — fiyata göre −%52,6 (güven 70/100). Analistlerin %100'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 55,
+  "bilanco_gun": 54,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -861,7 +861,7 @@
   "ozet": "ONTO karne puanı 79/100, trend skoru 0/100 (Düşüş). Adil değer harmanı 267,01 $ — fiyata göre +%55,1 (güven 52/100). Analistlerin %100'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 60,
+  "bilanco_gun": 59,
   "trend_uyarilari": [],
   "kaynak": "liste"
  },
@@ -897,7 +897,7 @@
   "ozet": "ALMU karne puanı 36/100, trend skoru 0/100 (Düşüş). Analistlerin %100'i 'Al' diyor.",
   "tez": null,
   "tez_uyarilari": [],
-  "bilanco_gun": 54,
+  "bilanco_gun": 53,
   "trend_uyarilari": [],
   "kaynak": "liste"
  }
